@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>J/UNIVERSE — Johnson Bediako Ametsitsi</title>
+    <meta
+      name="description"
+      content="I turn ideas into things people can use. Johnson Bediako Ametsitsi — technology creator based in Ghana and founder of Ishizaki Tech Services."
+    />
+    <meta name="author" content="Johnson Bediako Ametsitsi" />
+    <meta name="theme-color" content="#080B12" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="J/UNIVERSE" />
+    <meta property="og:title" content="J/UNIVERSE — Johnson Bediako Ametsitsi" />
+    <meta
+      property="og:description"
+      content="I turn ideas into things people can use. Explore ClassApp, MilkyPy, and Ishizaki Tech Services."
+    />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ishizakitech" />
+    <meta name="twitter:creator" content="@ishizakitech" />
+    <meta name="twitter:title" content="J/UNIVERSE — Johnson Bediako Ametsitsi" />
+    <meta
+      name="twitter:description"
+      content="I turn ideas into things people can use. Explore ClassApp, MilkyPy, and Ishizaki Tech Services."
+    />
+
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "name": "Johnson Bediako Ametsitsi",
+            "jobTitle": "Technology creator and founder of Ishizaki Tech Services",
+            "homeLocation": {
+              "@type": "Country",
+              "name": "Ghana"
+            },
+            "email": "mailto:ishizakitechservices@gmail.com",
+            "sameAs": [
+              "https://x.com/ishizakitech"
+            ],
+            "worksFor": {
+              "@type": "Organization",
+              "name": "Ishizaki Tech Services"
+            }
+          },
+          {
+            "@type": "Organization",
+            "name": "Ishizaki Tech Services",
+            "email": "mailto:ishizakitechservices@gmail.com",
+            "sameAs": [
+              "https://x.com/ishizakitech"
+            ],
+            "founder": {
+              "@type": "Person",
+              "name": "Johnson Bediako Ametsitsi"
+            },
+            "description": "Ishizaki Tech Services is the technology initiative founded by Johnson Bediako Ametsitsi."
+          },
+          {
+            "@type": "WebSite",
+            "name": "J/UNIVERSE",
+            "author": {
+              "@type": "Person",
+              "name": "Johnson Bediako Ametsitsi"
+            },
+            "description": "Portfolio of Johnson Bediako Ametsitsi — ClassApp (Prototype), MilkyPy (Live), and Ishizaki Tech Services."
+          }
+        ]
+      }
+    </script>
+
+    <!-- Prevent theme flash on initial paint (defaults to Cosmic Ink #080B12) -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('juniverse-theme');
+          var useLight = saved === 'light';
+          if (useLight) {
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-[#F3F0E9] text-[#080B12] dark:bg-[#080B12] dark:text-[#F3F0E9] antialiased selection:bg-[#9286D8]/30">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

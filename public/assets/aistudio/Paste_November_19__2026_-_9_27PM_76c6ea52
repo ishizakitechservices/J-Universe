@@ -1,0 +1,1098 @@
+# J/UNIVERSE 4.0 — CINEMATIC SIMPLICITY
+## Complete Google AI Studio Implementation Master Prompt
+
+### PROJECT
+J/UNIVERSE — The Personal Digital Portfolio of Johnson Bediako Ametsitsi
+
+### CORE VISION
+**A living 3D universe that tells my story, not a universe visitors must learn to navigate.**
+
+---
+
+# 1. YOUR ROLE AND MISSION
+
+Act as an exceptional multidisciplinary team combining the expertise of:
+
+- Award-winning digital art director
+- Senior creative Three.js/WebGL engineer
+- Principal React and TypeScript engineer
+- Premium editorial UI/UX designer
+- Cinematic motion and interaction designer
+- Accessibility specialist
+- Performance optimisation engineer
+- Product storytelling strategist
+- Quality assurance engineer
+
+Your assignment is to transform my EXISTING J/UNIVERSE portfolio into a visually exceptional, cinematic, simple, original and production-quality personal website.
+
+This is a major refinement of the existing application, not a completely unrelated rebuild.
+
+The previous designs became too complicated because they treated the portfolio as a solar-system exploration game.
+
+**Correct that mistake permanently.**
+
+The new experience must combine:
+
+1. A genuinely immersive full-screen 3D universe.
+2. Navigation as simple as an ordinary professional website.
+3. Original, memorable visual art direction.
+4. Clear, human-friendly explanations.
+5. Beautiful presentations of my real applications.
+6. Strong personal and founder identity.
+7. Smooth mobile performance.
+8. Maintainable engineering.
+
+The visitor must never need instructions to understand how to use my portfolio.
+
+## Non-negotiable principle
+
+**The universe follows the visitor. The visitor does not have to chase the universe.**
+
+---
+
+# 2. INSPECT AND PRESERVE MY EXISTING APPLICATION
+
+Before making changes, inspect all supplied project files and identify the actual framework, architecture, working features, routes, content and dependencies.
+
+The existing application has previously used:
+
+- React
+- TypeScript
+- Vite
+- Three.js
+- A 3D universe scene
+- Camera transitions
+- Procedural planet materials
+- Project data
+- Product detail pages
+- Responsive navigation
+- Theme and accessibility features
+
+These are background expectations, not assumptions to use without inspecting the supplied source.
+
+In previous versions, important files included:
+
+- `src/scene/UniverseStage.tsx`
+- `src/scene/centralCore.ts`
+- `src/scene/planets.ts`
+- `src/scene/texturesAndShaders.ts`
+- `src/scene/worldConfig.ts`
+- `src/components/UniverseExperience.tsx`
+- `src/pages/ProductDetailPage.tsx`
+- `src/data/universeData.ts`
+- `src/App.tsx`
+- `src/index.css`
+
+Find their actual equivalents in the current codebase.
+
+Do not create duplicate systems if existing components can be improved.
+
+Preserve:
+
+- Working routes
+- Real personal information
+- Genuine product descriptions
+- Verified application links
+- Existing product features
+- Useful reusable components
+- Accessibility support
+- Valid metadata
+- Existing integrations
+- Functional project experiences
+
+Do not invent information about me.
+
+Do not generate fake screenshots or testimonials.
+
+Do not delete working features without understanding their purpose.
+
+If an existing feature conflicts with the new simpler experience, relocate or redesign it where appropriate rather than automatically discarding it.
+
+---
+
+# 3. THE NEW DESIGN IDENTITY
+
+## Name
+
+J/UNIVERSE
+
+## Full name
+
+Johnson Bediako Ametsitsi
+
+## Identity
+
+Technology creator, digital product builder and founder of Ishizaki Tech Services.
+
+## Featured products
+
+ClassApp
+
+MilkyPy
+
+## Technology initiative
+
+Ishizaki Tech Services
+
+## Primary headline
+
+"I turn ideas into things people can use."
+
+## Supporting explanation
+
+"I'm Johnson. I create digital products that make learning and everyday experiences easier."
+
+## Brand personality
+
+- Creative
+- Human
+- Confident
+- Curious
+- Intelligent
+- Minimal
+- Sophisticated
+- Approachable
+- Original
+
+The website must feel like a thoughtfully designed personal digital home, not an artificially inflated technology corporation.
+
+---
+
+# 4. THE BIG DESIGN CHANGE
+
+## REMOVE THE SPACE-GAME NAVIGATION MODEL
+
+The current concept requires too much interpretation.
+
+Do not make users:
+
+- Search for planets to discover projects.
+- Drag the scene to find navigation items.
+- Rotate the universe before accessing content.
+- Zoom toward a world just to read basic information.
+- Learn camera controls.
+- Understand unfamiliar interface symbols.
+- Choose between several confusing navigation modes.
+
+Instead, create an intuitive scroll-driven portfolio.
+
+### How it should work
+
+The user opens the site.
+
+They immediately see my name, a clear statement of what I do, and a breathtaking 3D visual environment.
+
+They scroll down.
+
+The 3D universe transforms naturally to complement the section they are viewing.
+
+They reach ClassApp.
+
+They see the actual product, understand it and can visit it.
+
+They continue scrolling.
+
+The 3D world changes to complement MilkyPy.
+
+They explore my story and Ishizaki Tech Services.
+
+They reach the contact section.
+
+Everything works like a straightforward, beautifully designed website.
+
+**No tutorial. No complicated controls. No exploration puzzle.**
+
+---
+
+# 5. FULL-SCREEN LIVING 3D UNIVERSE
+
+Implement one coherent cinematic 3D environment using Three.js and the existing project architecture.
+
+The environment should fill the viewport, edge to edge, on the homepage.
+
+Build a single reusable rendering system rather than creating many independent WebGL canvases.
+
+The universe should include carefully designed elements such as:
+
+- Deep-space atmosphere
+- Multiple layers of stars
+- Strong foreground and background depth
+- Custom celestial bodies
+- A sculptural 3D J
+- Sophisticated lighting
+- Subtle atmospheric effects
+- Tasteful nebula-inspired elements
+- Planetary materials and textures
+- Cinematic camera compositions
+- Gentle environmental movement
+- A connected visual journey
+
+Avoid excessive visual effects.
+
+Do not create an overcrowded solar system.
+
+Do not add dozens of floating planets simply to make the scene appear complex.
+
+Prioritise atmosphere, composition, artistry, depth and a strong sense of identity.
+
+The universe should feel like a designed cinematic environment, not a Three.js tutorial demonstration.
+
+---
+
+# 6. THE LIVING J — SIGNATURE VISUAL IDENTITY
+
+Create an original sculptural 3D J monogram.
+
+This becomes the recognisable identity of my entire portfolio.
+
+It should not look like a default font extruded into 3D.
+
+Refine its:
+
+- Silhouette
+- Geometry
+- Surface material
+- Lighting
+- Proportions
+- Orientation
+- Relationship with the environment
+
+A sophisticated material treatment may combine dark ceramic, satin metal and restrained reflective highlights.
+
+Avoid excessive bloom or cheap neon effects.
+
+### The signature transformation
+
+At the opening scene, the J is the primary visual sculpture.
+
+As visitors scroll, the J gradually moves into the surrounding space while a subtle orbital line or related visual motif leads toward the next section.
+
+Throughout the website, the J identity can reappear through lighting, geometry or transitions.
+
+At the end of the experience, the motif resolves into a small final J beside the contact message.
+
+Do not implement an expensive continuous mesh-morphing system unless justified.
+
+Use a practical combination of 3D motion, composition, opacity and geometry changes to achieve a refined result.
+
+---
+
+# 7. HOMEPAGE SCENE-BY-SCENE DESIGN
+
+The homepage must feel like one continuous story.
+
+Each section should have one clear visual purpose, one clear message and one obvious next action.
+
+## SCENE 01 — ARRIVAL / JOHNSON
+
+### Visual
+
+Full-screen cinematic 3D universe.
+
+Dark cosmic environment.
+
+Large sculptural J, positioned so it does not obstruct the headline.
+
+Subtle stars and soft directional lighting.
+
+Carefully framed depth.
+
+### Text
+
+JOHNSON BEDIAKO AMETSITSI
+
+"I turn ideas into things people can use."
+
+"I'm Johnson. I create digital products that make learning and everyday experiences easier."
+
+### Actions
+
+Primary: Explore My Work
+
+Secondary: About Me
+
+### Interaction
+
+The J moves subtly.
+
+The camera responds gently to scrolling.
+
+The main text appears immediately rather than waiting for an intro animation.
+
+The Explore My Work action scrolls directly to the work section.
+
+## SCENE 02 — WHAT I DO
+
+### Headline
+
+"Good ideas deserve useful outcomes."
+
+### Content
+
+Three concise concepts:
+
+Imagine — Exploring ideas and possibilities.
+
+Build — Turning ideas into functional digital experiences.
+
+Improve — Learning, refining and making things better.
+
+### Visual
+
+The camera moves past the J and reveals a controlled celestial composition.
+
+The section should feel spacious and easy to read.
+
+Do not use three generic feature cards.
+
+Use a clean editorial layout.
+
+## SCENE 03 — CLASSAPP
+
+### Headline
+
+"School life, brought together."
+
+### Visual
+
+The 3D environment transitions into a beautiful lavender-inspired celestial scene.
+
+One large planet or sculptural celestial formation should dominate the visual composition.
+
+Use actual volumetric geometry and atmospheric materials.
+
+### Content
+
+ClassApp.
+
+A clear explanation of its purpose using verified information from the project.
+
+Show authentic product screenshots.
+
+Include main features that are actually implemented.
+
+### Actions
+
+Explore ClassApp
+
+Visit ClassApp
+
+Use real project destinations and URLs.
+
+### Experience
+
+On desktop, allow the product interface and celestial scene to complement each other.
+
+On mobile, prioritise readable content and screenshots.
+
+The visitor should not need to interact with the 3D planet to access ClassApp.
+
+## SCENE 04 — MILKYPY
+
+### Headline
+
+"Learn by doing."
+
+### Visual
+
+Transition the 3D environment into a mint-and-teal discovery atmosphere.
+
+Give this scene a genuinely different composition from ClassApp.
+
+It should not simply be the same sphere with a changed colour.
+
+Use distinct geometry, surface details, lighting and depth.
+
+### Content
+
+MilkyPy.
+
+Explain how the application helps people explore Python programming through lessons and practice, using features confirmed in the actual project.
+
+Include genuine screenshots.
+
+### Actions
+
+Explore MilkyPy
+
+Visit MilkyPy
+
+### Experience
+
+Optional small interactive demonstration if the existing application supports it.
+
+Never make the demo necessary to understand the product.
+
+## SCENE 05 — ABOUT JOHNSON
+
+### Headline
+
+"The person behind the ideas."
+
+### Visual
+
+The environment becomes quieter and more intimate.
+
+Use soft cosmic lighting, subtle planetary silhouettes and elegant motion.
+
+Include a genuine photograph only if one is available.
+
+### Content
+
+Explain who I am, what interests me, why I build technology and what motivates my work.
+
+Use the information already present in the codebase.
+
+Provide a clear About Me action.
+
+Do not create fake awards, milestones, education history or career achievements.
+
+## SCENE 06 — ISHIZAKI TECH SERVICES
+
+### Headline
+
+"Ideas into useful technology."
+
+### Visual
+
+A sophisticated warm-gold celestial composition representing creation and craftsmanship.
+
+Use warm metallic highlights, atmospheric depth and controlled geometry.
+
+Avoid making the environment resemble another generic planet.
+
+### Content
+
+Present Ishizaki Tech Services as the independent technology initiative I founded.
+
+Explain its purpose in simple language.
+
+Include verified associated work.
+
+### Action
+
+Explore Ishizaki Tech Services
+
+Do not imply the company has a large workforce, clients or achievements unless verified.
+
+## SCENE 07 — CONTACT
+
+### Headline
+
+"Have an idea worth building?"
+
+### Visual
+
+Gradually quiet the universe.
+
+Leave a beautiful atmospheric horizon or distant celestial light.
+
+The focus should return to readable text and direct contact actions.
+
+### Content
+
+Offer authentic ways to get in touch.
+
+Use existing verified email addresses or social links.
+
+### Interaction
+
+Simple, responsive and accessible.
+
+The visitor should not have to manipulate the 3D environment to contact me.
+
+---
+
+# 8. SCROLL-DRIVEN CINEMATIC CAMERA
+
+This is one of the most important engineering features.
+
+The camera should move through predetermined, art-directed compositions as the user scrolls.
+
+Do not implement uncontrolled free-roaming camera navigation as the default.
+
+### Required behaviour
+
+- Define camera keyframes for each major homepage scene.
+- Interpolate camera position, orientation and target smoothly.
+- Synchronise scene changes with section progress.
+- Use easing where appropriate.
+- Maintain clear text composition.
+- Avoid extreme rotations.
+- Avoid camera clipping.
+- Ensure transitions are reversible when scrolling upward.
+- Handle fast scrolling and direct anchor navigation correctly.
+- Prevent camera movement from interfering with reading.
+- Respect reduced-motion preferences.
+
+The camera should support the storytelling, not compete with it.
+
+Use a single source of truth for scene progress to avoid conflicting animation systems.
+
+Do not hijack native scrolling.
+
+Do not require continuous scroll wheel input merely to move between pages.
+
+The portfolio must retain normal browser scrolling, links and history behaviour.
+
+---
+
+# 9. INTRODUCE EDITORIAL WEB DESIGN
+
+The website should combine cinematic 3D with a sophisticated editorial layout.
+
+The HTML interface should be extremely simple.
+
+### Main navigation
+
+J. | Work | About | Studio | Contact
+
+Keep the navigation consistent.
+
+Use a mobile menu only when needed.
+
+Do not add a second experimental navigation system.
+
+### Typography
+
+Use expressive large headings.
+
+Use readable body text.
+
+Use restrained monospace accents where appropriate.
+
+Suggested typefaces:
+
+Space Grotesk
+
+Inter
+
+IBM Plex Mono
+
+Optimise font loading.
+
+### Layout
+
+Use:
+
+- Asymmetric compositions
+- Large type
+- Carefully controlled text width
+- Generous whitespace
+- Strong alignment
+- Deliberate contrast
+- A small number of meaningful section transitions
+
+Avoid:
+
+- Repetitive dashboard cards
+- Excessive badges
+- Icon grids
+- Unnecessary decorative panels
+- Large rounded rectangles everywhere
+- Generic SaaS layouts
+- Overlapping unreadable text
+
+The result should feel art-directed and custom-made.
+
+---
+
+# 10. VISUAL COLOUR SYSTEM
+
+Use a cinematic dark-first palette.
+
+Cosmic Ink — #080B12
+
+Deep Space — #101827
+
+Warm Ivory — #F3F0E9
+
+Muted Ultraviolet — #9286D8
+
+ClassApp Lavender — #B9A2E6
+
+MilkyPy Mint — #7EC9B5
+
+Ishizaki Gold — #D3AC70
+
+Use these as core design tokens.
+
+Derive supporting colour values for accessibility and visual depth.
+
+Do not overwhelm the design with neon colours.
+
+The cinematic homepage should remain dark-first to preserve the deep-space atmosphere.
+
+Detailed content pages may use lighter editorial backgrounds if this supports readability and visual consistency.
+
+If the existing application already has a theme preference, preserve it and implement a coherent treatment rather than removing the feature without justification.
+
+---
+
+# 11. DESIGN THE PRODUCT PRESENTATIONS
+
+ClassApp and MilkyPy must look like serious, useful digital products.
+
+Do not hide their actual interfaces behind decorative 3D scenes.
+
+Use a premium product presentation system.
+
+Each project should include:
+
+- Product name
+- Clear tagline
+- Simple explanation
+- Real screenshots
+- Verified features
+- Problem addressed
+- Who it helps
+- Real live link
+- Optional technical details
+- Related projects where applicable
+
+The homepage should provide concise introductions.
+
+Detailed product pages should offer deeper information.
+
+Use data-driven templates while allowing different compositions and visual treatments.
+
+The products should feel distinct without making the website inconsistent.
+
+---
+
+# 12. DEEPER PAGES
+
+Preserve the existing major pages.
+
+Work
+
+ClassApp
+
+MilkyPy
+
+About
+
+Ishizaki Tech Services
+
+Lab
+
+Journal
+
+Contact
+
+Do not put every page directly in the primary navigation.
+
+Lab and Journal can be accessible through relevant deeper sections or a discreet secondary menu.
+
+### Product pages
+
+Use cinematic planetary hero imagery or scene integration.
+
+Follow with accessible editorial content.
+
+Do not create separate heavy WebGL renderers on every page unless necessary.
+
+### About page
+
+Create a personal, human story.
+
+### Studio page
+
+Create a professional but authentic introduction to Ishizaki Tech Services.
+
+### Lab page
+
+Display only real experiments and projects.
+
+### Journal
+
+Use actual content or an honest empty state.
+
+### Contact
+
+Keep it straightforward and reliable.
+
+### 404 page
+
+Create a visually consistent, useful page with a clear route home.
+
+---
+
+# 13. MOBILE EXPERIENCE
+
+Design mobile separately rather than compressing the desktop scene.
+
+### Mobile homepage
+
+- One strong 3D visual subject at a time
+- Clear headline
+- Short supporting text
+- Large primary action
+- Minimal navigation
+- Readable project sections
+- Optimised screenshots
+- No tiny controls
+- No overlapping scene labels
+
+Use mobile-specific camera keyframes and scene positioning.
+
+Avoid placing a large planet behind text in a way that destroys contrast.
+
+Provide static compositions or lighter effects where device performance requires it.
+
+Maintain a strong visual identity on mobile.
+
+The mobile experience should feel deliberately designed and premium.
+
+---
+
+# 14. PERFORMANCE ARCHITECTURE
+
+This is a high-quality 3D website, but it should not become unnecessarily heavy.
+
+Preserve and improve the existing Three.js foundation.
+
+Use:
+
+- A single primary WebGL renderer
+- Reusable materials and geometries
+- Adaptive pixel ratio
+- Efficient shaders
+- Controlled lighting
+- Appropriate level of detail
+- Optimised textures
+- Lazy-loaded secondary content
+- Careful animation scheduling
+- Proper event listener cleanup
+- Proper GPU resource disposal
+- Lightweight HTML overlays
+- Responsive image delivery
+- Minimal third-party dependencies
+
+Avoid introducing multiple animation libraries that compete for the same state.
+
+Avoid expensive visual effects that contribute little to the appearance.
+
+Create quality tiers for capable desktops, ordinary mobiles and constrained devices.
+
+Implement a coherent fallback when WebGL is unavailable or fails.
+
+Measure actual performance.
+
+Do not claim benchmark results without running the tests.
+
+---
+
+# 15. ACCESSIBILITY AND USABILITY
+
+Target WCAG 2.2 AA for the HTML experience.
+
+Ensure:
+
+- All navigation works with keyboard.
+- All important content is present in semantic HTML.
+- Headings follow a logical hierarchy.
+- Links have clear descriptions.
+- Buttons have accessible labels.
+- Focus states are visible.
+- Text contrast remains strong over the 3D background.
+- Touch targets are easy to operate.
+- Motion can be reduced.
+- Content remains readable without JavaScript-driven animation.
+- The website can be used if WebGL fails.
+
+Respect `prefers-reduced-motion`.
+
+For reduced-motion mode, preserve the layout but replace substantial camera travel with static compositions or immediate scene changes.
+
+Do not create custom scroll interactions that break normal browser behaviour.
+
+---
+
+# 16. MAKE IT LOOK HUMAN-DESIGNED
+
+I do not want a generic AI-generated website.
+
+Avoid visual stereotypes such as:
+
+- Endless gradient backgrounds
+- Random glowing spheres
+- Excessive purple and blue neon
+- Generic UI cards
+- Large collections of icons
+- Overdesigned navigation
+- Tiny all-caps labels everywhere
+- Fake dashboards
+- Decorative numerical statistics
+- Unnecessary futuristic terminology
+- Identical sections with different colours
+- Automatic animations that delay understanding
+
+Instead, demonstrate craftsmanship through:
+
+- Original composition
+- Precise spacing
+- Distinctive geometry
+- Beautiful light and shadow
+- Sophisticated materials
+- Careful typography
+- Meaningful asymmetry
+- Authentic screenshots
+- Controlled motion
+- Consistent visual storytelling
+- Editorial restraint
+- Clear everyday language
+
+The visual quality should come from originality and precision, not the number of effects.
+
+---
+
+# 17. NO FAKE FEATURES
+
+Do not include:
+
+- Dead links
+- Fake contact forms
+- Mock chatbots presented as working
+- Invented project demos
+- Fabricated product statistics
+- Unverified achievements
+- Fake testimonials
+- Placeholder social profiles presented as real
+- Artificial loading sequences that serve no purpose
+
+If data or integration credentials are missing, preserve an honest state.
+
+Do not claim unavailable functionality is implemented.
+
+---
+
+# 18. SEARCH ENGINE OPTIMISATION
+
+Preserve or improve:
+
+- Page titles
+- Meta descriptions
+- Canonical URLs
+- Open Graph metadata
+- Social preview images
+- Structured data where appropriate
+- Sitemap
+- Robots configuration
+- Clean URLs
+- Semantic headings
+- Internal linking
+
+Ensure the actual text content remains accessible and indexable independently of WebGL.
+
+Use verified information only.
+
+---
+
+# 19. IMPLEMENTATION WORKFLOW
+
+Complete the work in deliberate phases.
+
+## Phase A — Audit
+
+Inspect the current project.
+
+Identify the existing scene system, content architecture, visual weaknesses, dependencies and working features.
+
+## Phase B — Design system
+
+Implement typography, colours, spacing, navigation, editorial layouts and a consistent visual identity.
+
+## Phase C — 3D transformation
+
+Refactor the current 3D experience into one cohesive, scroll-driven cinematic environment.
+
+Create or refine the J sculpture, celestial objects, scene lighting and camera compositions.
+
+## Phase D — Homepage integration
+
+Build the seven connected homepage scenes.
+
+Synchronise the 3D visual environment with normal scrolling.
+
+## Phase E — Product experience
+
+Redesign the ClassApp and MilkyPy sections using authentic application information and screenshots.
+
+Preserve their working links and deeper pages.
+
+## Phase F — Supporting pages
+
+Refine About, Ishizaki Tech Services, Lab, Journal, Contact and 404 pages.
+
+## Phase G — Responsive optimisation
+
+Create mobile-specific compositions.
+
+Implement adaptive quality and reduced-motion support.
+
+## Phase H — Validation
+
+Run available build and testing tools.
+
+Review the rendered results.
+
+Fix actual problems rather than relying on assumptions.
+
+Do not stop at a design plan if you have the tools and files needed to implement the project.
+
+---
+
+# 20. EXACT ACCEPTANCE TESTS
+
+The implementation is not complete until these behaviours are verified as far as the available environment allows.
+
+### First-time visitor
+
+Can immediately identify Johnson.
+
+Can understand what he creates.
+
+Can find ClassApp and MilkyPy without learning 3D controls.
+
+Can contact him without manipulating the canvas.
+
+### Navigation
+
+Work, About, Studio and Contact links work.
+
+Anchors land on the correct content.
+
+Browser back and forward behave normally.
+
+No content is trapped inside 3D interactions.
+
+### Desktop
+
+The universe fills the intended visual space.
+
+The J sculpture looks custom-made.
+
+The camera transitions smoothly.
+
+Text remains readable.
+
+The product sections feel distinct.
+
+### Mobile
+
+The hero remains understandable.
+
+The 3D subject is well framed.
+
+Project content is readable.
+
+Controls are touch-friendly.
+
+There is no horizontal overflow.
+
+### Accessibility
+
+Keyboard navigation works.
+
+Reduced-motion mode works.
+
+Screen readers can access the important content.
+
+A WebGL fallback is available.
+
+### Engineering
+
+The build completes.
+
+TypeScript checks pass.
+
+No critical runtime errors occur.
+
+Existing routes remain available.
+
+GPU and event resources are cleaned up.
+
+Performance is measured where tools are available.
+
+Do not report any test as passed unless it was actually executed.
+
+---
+
+# 21. FINAL CREATIVE EXPERIENCE
+
+Imagine a visitor opening J/UNIVERSE.
+
+They immediately see a beautifully art-directed cosmic environment.
+
+A custom J sculpture moves gently through deep space.
+
+Large, clear typography introduces Johnson.
+
+They understand what he creates.
+
+They click Explore My Work.
+
+The page scrolls naturally.
+
+The environment transitions into a beautiful lavender celestial composition.
+
+They discover ClassApp, see its real interface and understand its purpose.
+
+They continue scrolling.
+
+The scene transforms into a distinctive mint-coloured environment.
+
+They discover MilkyPy.
+
+They learn about Johnson and Ishizaki Tech Services.
+
+Finally, they reach a simple invitation to connect.
+
+They have experienced something extraordinary.
+
+But they never had to learn how the website works.
+
+That is the desired result.
+
+---
+
+# 22. FINAL NON-NEGOTIABLE DIRECTIVE
+
+Build the best possible version of J/UNIVERSE 4.0 by improving the supplied existing project.
+
+Prioritise:
+
+1. **Intuitive navigation over unusual controls.**
+2. **Original art direction over generic effects.**
+3. **Real product information over decorative complexity.**
+4. **One cohesive 3D environment over disconnected scenes.**
+5. **Cinematic storytelling over a space-exploration game.**
+6. **Excellent mobile usability over desktop-only spectacle.**
+7. **Maintainable performance over unnecessary dependencies.**
+
+Do not deliver a generic developer portfolio.
+
+Do not deliver a solar system navigation game.
+
+Do not deliver a dashboard with planets.
+
+Do not remove the full-screen 3D experience.
+
+Do not make the site visually ordinary.
+
+Create a memorable, premium, cinematic personal portfolio that is exceptionally simple to use.
+
+**J/UNIVERSE — A living universe of ideas, built around one person.**
+
+**Johnson Bediako Ametsitsi.**
+
+### BEGIN IMPLEMENTATION
+
+Inspect the existing codebase, make the necessary changes, integrate the scenes, preserve real functionality, test the implementation and report the actual results.
+
+Do not replace working systems unnecessarily.
+
+Do not stop after creating a plan when implementation is possible.
+
+The final deliverable is a working, cohesive, carefully art-directed website—not just a concept or mockup.
