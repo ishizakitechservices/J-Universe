@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Expand, Lock } from 'lucide-react';
 import { AccentWorld, StageAvailability } from '../data/universeData';
+import { buildLowResPlaceholderDataUri } from '../utils/imagePlaceholder';
+
+const loadedImageSrcs = new Set<string>();
 
 interface BrowserMockupFrameProps {
   src: string;
@@ -12,6 +15,9 @@ interface BrowserMockupFrameProps {
   aspectClass?: string;
   objectFit?: 'contain' | 'cover';
   priority?: boolean;
+  loading?: 'lazy' | 'eager';
+  blurredPlaceholder?: boolean;
+  placeholderSrc?: string;
   onInspect?: () => void;
   inspectLabel?: string;
   className?: string;
@@ -41,15 +47,53 @@ export function BrowserMockupFrame({
   aspectClass = 'aspect-[16/10]',
   objectFit = 'contain',
   priority = false,
+  loading,
+  blurredPlaceholder = true,
+  placeholderSrc,
   onInspect,
   inspectLabel,
   className = '',
 }: BrowserMockupFrameProps) {
+  const imgRef = useRef<HTMLImageElement>(null);
   const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(() => Boolean(src && loadedImageSrcs.has(src)));
+
+  const resolvedLoading: 'lazy' | 'eager' = loading ?? (priority ? 'eager' : 'lazy');
+  const resolvedPlaceholderSrc = useMemo(
+    () => placeholderSrc ?? buildLowResPlaceholderDataUri(accent),
+    [accent, placeholderSrc]
+  );
 
   useEffect(() => {
     setHasError(false);
+    if (!src) {
+      setIsLoaded(false);
+      return;
+    }
+    if (loadedImageSrcs.has(src)) {
+      setIsLoaded(true);
+      return;
+    }
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth > 0) {
+      loadedImageSrcs.add(src);
+      setIsLoaded(true);
+    } else {
+      setIsLoaded(false);
+    }
   }, [src]);
+
+  const handleLoad = () => {
+    if (src) {
+      loadedImageSrcs.add(src);
+    }
+    setIsLoaded(true);
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    setIsLoaded(false);
+  };
 
   const viewportBody = hasError || !src ? (
     <div
@@ -65,17 +109,32 @@ export function BrowserMockupFrame({
       </div>
     </div>
   ) : (
-    <div className="h-full w-full flex items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(146,134,216,0.09),#060911_76%)]">
+    <div className="relative h-full w-full overflow-hidden flex items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(146,134,216,0.09),#060911_76%)]">
+      {blurredPlaceholder && (
+        <img
+          src={resolvedPlaceholderSrc}
+          alt=""
+          aria-hidden="true"
+          decoding="sync"
+          className={`pointer-events-none absolute inset-0 h-full w-full object-cover blur-xl scale-110 transition-opacity duration-500 motion-reduce:transition-none ${
+            isLoaded ? 'opacity-0' : 'opacity-100'
+          }`}
+        />
+      )}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         referrerPolicy="no-referrer"
-        loading={priority ? 'eager' : 'lazy'}
+        loading={resolvedLoading}
         decoding="async"
-        onError={() => setHasError(true)}
-        className={`h-full w-full ${
+        onLoad={handleLoad}
+        onError={handleError}
+        className={`relative z-10 h-full w-full ${
           objectFit === 'contain' ? 'object-contain p-1 sm:p-1.5' : 'object-cover object-top'
-        } transition-transform duration-300 group-hover:scale-[1.01]`}
+        } transition-[opacity,transform] duration-500 motion-reduce:transition-none group-hover:scale-[1.01] ${
+          isLoaded || !blurredPlaceholder ? 'opacity-100' : 'opacity-0'
+        }`}
       />
     </div>
   );

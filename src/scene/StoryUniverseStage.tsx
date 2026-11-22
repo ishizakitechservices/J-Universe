@@ -15,7 +15,11 @@ import {
   createPlanetSurfaceTexture,
 } from './texturesAndShaders';
 import { createCentralJSculpture } from './centralCore';
-import { detectRenderCapability } from './deviceCapability';
+import {
+  computeRenderScale,
+  detectRenderCapability,
+  getFramePacingConfig,
+} from './deviceCapability';
 
 interface StoryUniverseStageProps {
   sceneProgressRef: React.MutableRefObject<number>;
@@ -584,12 +588,24 @@ export function StoryUniverseStage({
     let disposed = false;
     let renderBusy = false;
     let renderDirty = false;
+    let isInViewport = true;
+    let currentPixelRatio = cap.pixelRatio;
     let lastTimeMs = performance.now();
+    let lastFrameRenderMs = 0;
     let elapsedTotal = 0;
     let currentDampedProgress = sceneProgressRef.current;
 
+    containerEl.dataset.inViewport = 'true';
+
+    function pauseScheduledFrames() {
+      cancelAnimationFrame(frameId);
+      clearTimeout(frameId);
+      clearTimeout(idleTimerId);
+      renderBusy = false;
+    }
+
     function afterDraw(cb: () => void) {
-      if (disposed) return;
+      if (disposed || !isInViewport) return;
       const gl = renderer.getContext() as WebGL2RenderingContext;
       if (!gl || typeof gl.fenceSync !== 'function') {
         frameId = window.setTimeout(cb, 80);
@@ -598,7 +614,7 @@ export function StoryUniverseStage({
       const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
       gl.flush();
       const poll = () => {
-        if (disposed) {
+        if (disposed || !isInViewport) {
           if (sync) gl.deleteSync(sync);
           return;
         }
@@ -617,6 +633,7 @@ export function StoryUniverseStage({
       const rawDt = Math.min(Math.max((nowMs - lastTimeMs) / 1000, 0.001), 0.25);
       const dt = Math.min(rawDt, 0.08);
       lastTimeMs = nowMs;
+      lastFrameRenderMs = nowMs;
       const isReduced = reducedMotionRef.current;
       if (!isReduced) {
         elapsedTotal += dt;
@@ -709,7 +726,7 @@ export function StoryUniverseStage({
     }
 
     function requestRender() {
-      if (disposed || document.hidden) return;
+      if (disposed || document.hidden || !isInViewport) return;
       clearTimeout(idleTimerId);
       if (renderBusy) {
         renderDirty = true;
@@ -717,18 +734,35 @@ export function StoryUniverseStage({
       }
       renderBusy = true;
       frameId = requestAnimationFrame((nowMs) => {
-        if (disposed) return;
+        if (disposed || !isInViewport) {
+          renderBusy = false;
+          return;
+        }
         renderDirty = false;
         const animating = stepAndRender(nowMs);
 
         const done = () => {
           renderBusy = false;
-          if (disposed || document.hidden) return;
+          if (disposed || document.hidden || !isInViewport) return;
+
+          const pacing = getFramePacingConfig({
+            isMobileViewport: containerEl.clientWidth < 768,
+            isSoftwareGl,
+          });
+
           if (renderDirty || animating) {
+            if (!isSoftwareGl && pacing.activeMinIntervalMs > 0) {
+              const sinceDraw = performance.now() - lastFrameRenderMs;
+              const waitMs = Math.max(pacing.activeMinIntervalMs - sinceDraw, 0);
+              if (waitMs > 4) {
+                idleTimerId = window.setTimeout(requestRender, waitMs);
+                return;
+              }
+            }
             requestRender();
           } else if (!isSoftwareGl && !reducedMotionRef.current) {
-            // Pace idle ambient cosmos at ~25fps to keep laptop fans and integrated GPUs quiet
-            idleTimerId = window.setTimeout(requestRender, 38);
+            // Pace idle ambient cosmos (~15fps on mobile, ~26fps on desktop)
+            idleTimerId = window.setTimeout(requestRender, pacing.idleIntervalMs);
           }
         };
 
@@ -754,12 +788,36 @@ export function StoryUniverseStage({
     renderer.domElement.addEventListener('webglcontextrestored', handleContextRestored);
 
     const handleVisibility = () => {
-      if (!document.hidden) {
+      if (document.hidden) {
+        pauseScheduledFrames();
+      } else if (isInViewport) {
         lastTimeMs = performance.now();
         requestRender();
       }
     };
     document.addEventListener('visibilitychange', handleVisibility);
+
+    let intersectionObserver: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== 'undefined') {
+      intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          const latest = entries[entries.length - 1];
+          if (!latest) return;
+          const nowVisible = latest.isIntersecting;
+          if (nowVisible === isInViewport) return;
+          isInViewport = nowVisible;
+          containerEl.dataset.inViewport = String(nowVisible);
+          if (!nowVisible) {
+            pauseScheduledFrames();
+          } else if (!document.hidden) {
+            lastTimeMs = performance.now();
+            requestRender();
+          }
+        },
+        { threshold: 0.01 }
+      );
+      intersectionObserver.observe(containerEl);
+    }
 
     let lastW = initW;
     let lastH = initH;
@@ -770,11 +828,26 @@ export function StoryUniverseStage({
       if (w === lastW && h === lastH) return;
       lastW = w;
       lastH = h;
+
+      const nextPixelRatio = computeRenderScale({
+        isSoftwareGl,
+        isConstrainedDevice: cap.isConstrainedDevice,
+        isMobileViewport: w < 768,
+        devicePixelRatio: window.devicePixelRatio || 1,
+      });
+      if (nextPixelRatio !== currentPixelRatio) {
+        currentPixelRatio = nextPixelRatio;
+        renderer.setPixelRatio(nextPixelRatio);
+        starMat.uniforms.uPixelRatio.value = nextPixelRatio;
+      }
+
       camera.fov = w < 640 ? 50 : 42;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      stepAndRender(performance.now());
+      if (isInViewport) {
+        stepAndRender(performance.now());
+      }
     });
     resizeObserver.observe(containerEl);
 
@@ -788,9 +861,8 @@ export function StoryUniverseStage({
     return () => {
       disposed = true;
       stageNotifyRef.current = null;
-      cancelAnimationFrame(frameId);
-      clearTimeout(frameId);
-      clearTimeout(idleTimerId);
+      pauseScheduledFrames();
+      intersectionObserver?.disconnect();
       resizeObserver.disconnect();
       document.removeEventListener('visibilitychange', handleVisibility);
       renderer.domElement.removeEventListener('webglcontextlost', handleContextLost);

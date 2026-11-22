@@ -126,7 +126,8 @@ export function ProductStoryShowcase({
           accent={project.themeAccent}
           aspectClass="aspect-[16/9]"
           objectFit="contain"
-          priority
+          loading="lazy"
+          blurredPlaceholder
           onInspect={inspectActive}
           inspectLabel={`Inspect full screenshot of ${project.name} ${activeChapter.shortLabel}`}
         />
@@ -248,7 +249,8 @@ export function ProductStoryShowcase({
             accent={project.themeAccent}
             aspectClass="aspect-[16/10]"
             objectFit="contain"
-            priority
+            loading="lazy"
+            blurredPlaceholder
             onInspect={inspectActive}
             inspectLabel={`Inspect full screenshot of ${activeChapter.title}`}
           />
