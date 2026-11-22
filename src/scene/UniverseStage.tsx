@@ -2,10 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { UNIVERSE_DESTINATIONS, UniverseDestination } from '../data/universeData';
 import {
   CameraPose,
@@ -88,8 +84,8 @@ export function UniverseStage({
 
     try {
       renderer = new THREE.WebGLRenderer({
-        antialias: !isSoftwareGl,
-        powerPreference: cap.isConstrainedDevice ? 'default' : 'high-performance',
+        antialias: !isSoftwareGl && !cap.isConstrainedDevice && cap.pixelRatio <= 1.1,
+        powerPreference: 'default',
       });
     } catch {
       setWebglFailed(true);
@@ -98,15 +94,14 @@ export function UniverseStage({
 
     const initW = Math.max(containerEl.clientWidth, 320);
     const initH = Math.max(containerEl.clientHeight, 320);
-    const maxAnisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+    const maxAnisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 4);
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.08;
     renderer.setPixelRatio(cap.pixelRatio);
     renderer.setSize(initW, initH);
-    renderer.shadowMap.enabled = cap.enableShadows;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = false;
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
@@ -117,8 +112,10 @@ export function UniverseStage({
     scene.fog = new THREE.FogExp2(COSMIC_PALETTE.cosmicInk, 0.011);
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    const envTarget = pmremGenerator.fromScene(new RoomEnvironment(), 0.04);
+    const roomEnv = new RoomEnvironment();
+    const envTarget = pmremGenerator.fromScene(roomEnv, 0.04);
     scene.environment = envTarget.texture;
+    roomEnv.dispose();
     pmremGenerator.dispose();
 
     const initialMobile = initW < 768;
@@ -148,28 +145,17 @@ export function UniverseStage({
     controls.target.set(initPose.target.x, initPose.target.y, initPose.target.z);
     controls.update();
 
-    // Cinematic 3-point celestial studio lighting
+    // Streamlined celestial studio lighting (Hemi + Key + Warm Fill)
     const hemiLight = new THREE.HemisphereLight(
-      0x9eb8ec,
+      0xb2c8ee,
       COSMIC_PALETTE.cosmicInk,
-      0.95
+      1.15
     );
     scene.add(hemiLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfff1dc, 2.2);
+    const keyLight = new THREE.DirectionalLight(0xfff1dc, 2.15);
     keyLight.position.set(14, 18, 12);
-    keyLight.castShadow = !isSoftwareGl;
-    keyLight.shadow.mapSize.set(1024, 1024);
-    keyLight.shadow.bias = -0.0005;
-    keyLight.shadow.normalBias = 0.02;
     scene.add(keyLight);
-
-    const rimLight = new THREE.DirectionalLight(
-      COSMIC_PALETTE.mutedUltraviolet,
-      1.35
-    );
-    rimLight.position.set(-16, 7, -14);
-    scene.add(rimLight);
 
     const accentWarmFill = new THREE.PointLight(
       COSMIC_PALETTE.ishizakiGold,
@@ -183,14 +169,14 @@ export function UniverseStage({
     const disposables: Array<{ dispose: () => void }> = [envTarget];
 
     // 1. Deep Cosmic Sky Dome
-    const skyGeo = new THREE.SphereGeometry(95, 32, 24);
+    const skyGeo = new THREE.SphereGeometry(95, 20, 14);
     const skyMat = createCosmicSkyMaterial();
     const skyMesh = new THREE.Mesh(skyGeo, skyMat);
     scene.add(skyMesh);
     disposables.push(skyGeo, skyMat);
 
     // 2. Distant Layered Starfield (crisp anti-aliased circular stars via custom ShaderMaterial)
-    const starCount = 1350;
+    const starCount = cap.starCount;
     const starPositions = new Float32Array(starCount * 3);
     const starColors = new Float32Array(starCount * 3);
     const starSizes = new Float32Array(starCount);
@@ -259,7 +245,7 @@ export function UniverseStage({
     disposables.push(starGeo, starMat);
 
     // 3. Mid-field Instanced Cosmic Motes for 3D parallax depth
-    const moteCount = 120;
+    const moteCount = cap.moteCount;
     const moteGeo = new THREE.OctahedronGeometry(0.04, 0);
     const moteMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.warmIvory,
@@ -301,7 +287,7 @@ export function UniverseStage({
     const addedRingIndices = new Set<number>();
 
     UNIVERSE_DESTINATIONS.forEach((dest: UniverseDestination) => {
-      const rig = createCelestialWorld(dest, maxAnisotropy, isSoftwareGl);
+      const rig = createCelestialWorld(dest, maxAnisotropy, isSoftwareGl, cap.sphereSegments);
       scene.add(rig.group);
       // Avoid duplicating identical orbital ring loops per tier
       if (!addedRingIndices.has(dest.orbitRing)) {
@@ -312,22 +298,6 @@ export function UniverseStage({
       hitTargets.push(rig.hitProxy);
       disposables.push(rig);
     });
-
-    // 6. Controlled Bloom Post-Processing (Desktop GPU only)
-    let composer: EffectComposer | null = null;
-    let bloomPass: UnrealBloomPass | null = null;
-    if (cap.enableBloom) {
-      composer = new EffectComposer(renderer);
-      composer.addPass(new RenderPass(scene, camera));
-      bloomPass = new UnrealBloomPass(
-        new THREE.Vector2(initW, initH),
-        0.18,
-        0.35,
-        0.9
-      );
-      composer.addPass(bloomPass);
-      composer.addPass(new OutputPass());
-    }
 
     // Camera transition state
     let desiredCamPos = camera.position.clone();
@@ -401,8 +371,9 @@ export function UniverseStage({
       }
     }
 
-    // Frame scheduling (continuous gentle cosmos on GPU; on-demand + afterDraw on Software WebGL)
+    // Frame scheduling (full-rate during camera flight/drag; quiet ~25fps idle; on-demand on Software WebGL)
     let frameId = 0;
+    let idleTimerId = 0;
     let disposed = false;
     let renderBusy = false;
     let renderDirty = false;
@@ -519,11 +490,7 @@ export function UniverseStage({
         stillAnimating = true;
       }
 
-      if (composer && cap.enableBloom) {
-        composer.render();
-      } else {
-        renderer.render(scene, camera);
-      }
+      renderer.render(scene, camera);
 
       projectWorldLabels();
       return stillAnimating;
@@ -531,6 +498,7 @@ export function UniverseStage({
 
     function requestRender() {
       if (disposed || document.hidden) return;
+      clearTimeout(idleTimerId);
       if (renderBusy) {
         renderDirty = true;
         return;
@@ -544,9 +512,10 @@ export function UniverseStage({
         const done = () => {
           renderBusy = false;
           if (disposed || document.hidden) return;
-          const keepLoopingOnGpu = !isSoftwareGl && !reducedMotionRef.current;
-          if (renderDirty || transitionActive || keepLoopingOnGpu) {
+          if (renderDirty || transitionActive) {
             requestRender();
+          } else if (!isSoftwareGl && !reducedMotionRef.current) {
+            idleTimerId = window.setTimeout(requestRender, 38);
           }
         };
 
@@ -661,19 +630,20 @@ export function UniverseStage({
     };
     document.addEventListener('visibilitychange', handleVisibility);
 
+    let lastW = initW;
+    let lastH = initH;
     const resizeObserver = new ResizeObserver(() => {
       if (disposed) return;
       const w = Math.max(containerEl.clientWidth, 320);
       const h = Math.max(containerEl.clientHeight, 320);
+      if (w === lastW && h === lastH) return;
+      lastW = w;
+      lastH = h;
       camera.fov = w < 640 ? 54 : 44;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      if (composer && bloomPass) {
-        composer.setSize(w, h);
-        bloomPass.resolution.set(w, h);
-      }
-      requestRender();
+      stepAndRender(performance.now());
     });
     resizeObserver.observe(containerEl);
 
@@ -689,6 +659,7 @@ export function UniverseStage({
       stageApiRef.current = null;
       cancelAnimationFrame(frameId);
       clearTimeout(frameId);
+      clearTimeout(idleTimerId);
       resizeObserver.disconnect();
       document.removeEventListener('visibilitychange', handleVisibility);
       controls.removeEventListener('start', handleControlsStart);
@@ -702,7 +673,6 @@ export function UniverseStage({
         'webglcontextrestored',
         handleContextRestored
       );
-      composer?.dispose();
       disposables.forEach((d) => d.dispose());
       renderer.dispose();
       if (mountEl.contains(renderer.domElement)) {

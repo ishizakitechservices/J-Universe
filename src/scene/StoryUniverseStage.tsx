@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import {
   COSMIC_PALETTE,
   WORLD_RING_RADII,
@@ -68,8 +64,8 @@ export function StoryUniverseStage({
 
     try {
       renderer = new THREE.WebGLRenderer({
-        antialias: !isSoftwareGl,
-        powerPreference: cap.isConstrainedDevice ? 'default' : 'high-performance',
+        antialias: !isSoftwareGl && !cap.isConstrainedDevice && cap.pixelRatio <= 1.1,
+        powerPreference: 'default',
       });
     } catch {
       setWebglFailed(true);
@@ -78,15 +74,14 @@ export function StoryUniverseStage({
 
     const initW = Math.max(containerEl.clientWidth, 320);
     const initH = Math.max(containerEl.clientHeight, 320);
-    const maxAnisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+    const maxAnisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 4);
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.08;
     renderer.setPixelRatio(cap.pixelRatio);
     renderer.setSize(initW, initH);
-    renderer.shadowMap.enabled = cap.enableShadows;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = false;
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
@@ -97,8 +92,10 @@ export function StoryUniverseStage({
     scene.fog = new THREE.FogExp2(COSMIC_PALETTE.cosmicInk, 0.021);
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    const envTarget = pmremGenerator.fromScene(new RoomEnvironment(), 0.04);
+    const roomEnv = new RoomEnvironment();
+    const envTarget = pmremGenerator.fromScene(roomEnv, 0.04);
     scene.environment = envTarget.texture;
+    roomEnv.dispose();
     pmremGenerator.dispose();
 
     const isMobileInit = initW < 768;
@@ -122,28 +119,17 @@ export function StoryUniverseStage({
     );
     camera.lookAt(_lookTarget);
 
-    // 3-Point Celestial Studio Lighting + Dynamic Story Accent Fill
+    // Streamlined Celestial Studio Lighting (Hemi + Key + Dynamic Accent)
     const hemiLight = new THREE.HemisphereLight(
-      0xa6bee8,
+      0xb4c8ee,
       COSMIC_PALETTE.cosmicInk,
-      0.86
+      1.05
     );
     scene.add(hemiLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfff2de, 2.08);
+    const keyLight = new THREE.DirectionalLight(0xfff2de, 2.05);
     keyLight.position.set(12, 16, 14);
-    keyLight.castShadow = cap.enableShadows;
-    keyLight.shadow.mapSize.set(1024, 1024);
-    keyLight.shadow.bias = -0.0005;
-    keyLight.shadow.normalBias = 0.02;
     scene.add(keyLight);
-
-    const rimLight = new THREE.DirectionalLight(
-      COSMIC_PALETTE.mutedUltraviolet,
-      1.12
-    );
-    rimLight.position.set(-14, 8, -24);
-    scene.add(rimLight);
 
     const storyAccentLight = new THREE.PointLight(
       initialPose.accentHex,
@@ -157,7 +143,7 @@ export function StoryUniverseStage({
     const disposables: Array<{ dispose: () => void }> = [envTarget];
 
     // 1. Sky Dome centered along the journey corridor
-    const skyGeo = new THREE.SphereGeometry(130, 28, 20);
+    const skyGeo = new THREE.SphereGeometry(130, 20, 14);
     const skyMat = createCosmicSkyMaterial();
     const skyMesh = new THREE.Mesh(skyGeo, skyMat);
     skyMesh.position.set(0, 0, -30);
@@ -276,7 +262,7 @@ export function StoryUniverseStage({
       new THREE.Vector3(0.55, 0.1, -65.5),
     ]);
     const threadGeo = new THREE.BufferGeometry().setFromPoints(
-      threadCurve.getPoints(160)
+      threadCurve.getPoints(96)
     );
     const threadMat = new THREE.LineBasicMaterial({
       color: COSMIC_PALETTE.mutedUltraviolet,
@@ -297,19 +283,17 @@ export function StoryUniverseStage({
     scene.add(centralRig.group);
     disposables.push(centralRig);
 
-    const sharedGoldMat = new THREE.MeshPhysicalMaterial({
+    const sharedGoldMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.ishizakiGold,
       emissive: COSMIC_PALETTE.ishizakiGold,
       emissiveIntensity: 0.05,
       metalness: 0.94,
       roughness: 0.18,
-      clearcoat: 0.45,
     });
-    const sharedIvoryMat = new THREE.MeshPhysicalMaterial({
+    const sharedIvoryMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.warmIvory,
-      roughness: 0.26,
+      roughness: 0.24,
       metalness: 0.22,
-      clearcoat: 0.65,
     });
     disposables.push(sharedGoldMat, sharedIvoryMat);
 
@@ -325,12 +309,10 @@ export function StoryUniverseStage({
 
     const classAppTex = createPlanetSurfaceTexture('learning', maxAnisotropy);
     const classAppCoreGeo = new THREE.SphereGeometry(1.72, seg, seg);
-    const classAppCoreMat = new THREE.MeshPhysicalMaterial({
+    const classAppCoreMat = new THREE.MeshStandardMaterial({
       map: classAppTex,
-      roughness: 0.46,
-      metalness: 0.06,
-      clearcoat: 0.24,
-      clearcoatRoughness: 0.36,
+      roughness: 0.44,
+      metalness: 0.08,
     });
     const classAppCore = new THREE.Mesh(classAppCoreGeo, classAppCoreMat);
     classAppGroup.add(classAppCore);
@@ -349,7 +331,7 @@ export function StoryUniverseStage({
     axisCapBottom.position.set(0, -2.01, 0);
     axisMesh.add(axisCapBottom);
 
-    const cradleArcGeo = new THREE.TorusGeometry(1.94, 0.015, 10, 48, Math.PI * 1.15);
+    const cradleArcGeo = new THREE.TorusGeometry(1.94, 0.015, 8, 36, Math.PI * 1.15);
     const cradleArc = new THREE.Mesh(cradleArcGeo, sharedGoldMat);
     cradleArc.rotation.set(0.08, 0.35, -Math.PI * 0.57 + 0.22);
     classAppGroup.add(cradleArc);
@@ -361,7 +343,7 @@ export function StoryUniverseStage({
     );
     classAppGroup.add(new THREE.Mesh(classAppAtmoGeo, classAppAtmoMat));
 
-    const classAppRingGeo = new THREE.RingGeometry(2.26, 2.66, 72);
+    const classAppRingGeo = new THREE.RingGeometry(2.26, 2.66, 48);
     classAppRingGeo.rotateX(Math.PI / 2);
     const classAppRingMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.classAppLavender,
@@ -375,7 +357,7 @@ export function StoryUniverseStage({
     classAppRing.rotation.set(0.32, 0.12, -0.2);
     classAppGroup.add(classAppRing);
 
-    const classAppOuterGeo = new THREE.TorusGeometry(2.88, 0.014, 10, 84);
+    const classAppOuterGeo = new THREE.TorusGeometry(2.88, 0.014, 8, 52);
     classAppOuterGeo.rotateX(Math.PI / 2);
     const classAppOuter = new THREE.Mesh(classAppOuterGeo, sharedIvoryMat);
     classAppOuter.rotation.copy(classAppRing.rotation);
@@ -383,7 +365,7 @@ export function StoryUniverseStage({
 
     const classAppMoons = new THREE.Group();
     classAppMoons.rotation.copy(classAppRing.rotation);
-    const moonGeo = new THREE.SphereGeometry(0.13, 18, 18);
+    const moonGeo = new THREE.SphereGeometry(0.13, 12, 12);
     const companionMoon = new THREE.Mesh(moonGeo, sharedIvoryMat);
     companionMoon.position.set(2.88, 0.06, 0);
     classAppMoons.add(companionMoon);
@@ -415,38 +397,31 @@ export function StoryUniverseStage({
 
     const milkyPyTex = createPlanetSurfaceTexture('discovery', maxAnisotropy);
     const milkyCoreGeo = new THREE.IcosahedronGeometry(1.24, 1);
-    const milkyCoreMat = new THREE.MeshPhysicalMaterial({
+    const milkyCoreMat = new THREE.MeshStandardMaterial({
       map: milkyPyTex,
       color: 0xffffff,
       roughness: 0.24,
       metalness: 0.34,
-      clearcoat: 0.78,
-      clearcoatRoughness: 0.16,
       flatShading: true,
     });
     const milkyCore = new THREE.Mesh(milkyCoreGeo, milkyCoreMat);
     milkyPyGroup.add(milkyCore);
 
-    // Outer translucent crystal lattice shell framing the inner emerald discovery core
+    // Outer translucent crystal lattice shell (lightweight PBR, zero dual-pass transmission)
     const milkyShellGeo = new THREE.IcosahedronGeometry(1.58, 1);
-    const milkyShellMat = new THREE.MeshPhysicalMaterial({
+    const milkyShellMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.milkyPyMint,
-      roughness: 0.08,
-      metalness: 0.06,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.06,
-      transmission: isSoftwareGl ? 0 : 0.42,
-      ior: 1.48,
-      thickness: 0.85,
+      roughness: 0.12,
+      metalness: 0.16,
       transparent: true,
-      opacity: isSoftwareGl ? 0.3 : 0.92,
+      opacity: 0.26,
       flatShading: true,
       depthWrite: false,
     });
     const milkyShell = new THREE.Mesh(milkyShellGeo, milkyShellMat);
     milkyPyGroup.add(milkyShell);
 
-    const milkyInnerRingGeo = new THREE.TorusGeometry(1.9, 0.018, 8, 64);
+    const milkyInnerRingGeo = new THREE.TorusGeometry(1.9, 0.018, 8, 44);
     const milkyRingMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.milkyPyMint,
       metalness: 0.85,
@@ -457,34 +432,33 @@ export function StoryUniverseStage({
     mRingA.rotation.set(0.62, 0.25, -0.35);
     milkyOrbitA.add(mRingA);
 
-    const milkyOuterRingGeo = new THREE.TorusGeometry(2.44, 0.013, 10, 72);
+    const milkyOuterRingGeo = new THREE.TorusGeometry(2.44, 0.013, 8, 48);
     const mRingB = new THREE.Mesh(milkyOuterRingGeo, sharedIvoryMat);
     mRingB.rotation.set(-0.55, 0.4, 0.28);
     milkyOrbitA.add(mRingB);
 
     // 2 asymmetric orbiting markers (faceted code prism + ivory counterweight)
     const prismGeo = new THREE.OctahedronGeometry(0.19, 0);
-    const prismMat = new THREE.MeshPhysicalMaterial({
+    const prismMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.milkyPyMint,
       emissive: COSMIC_PALETTE.milkyPyMint,
       emissiveIntensity: 0.14,
-      roughness: 0.16,
-      metalness: 0.45,
-      clearcoat: 0.85,
+      roughness: 0.18,
+      metalness: 0.48,
     });
     const prismNode = new THREE.Mesh(prismGeo, prismMat);
     prismNode.position.set(2.44, 0.26, 0);
     prismNode.rotation.set(0.3, 0.6, 0.2);
     milkyOrbitA.add(prismNode);
 
-    const mintMoonGeo = new THREE.SphereGeometry(0.11, 16, 16);
+    const mintMoonGeo = new THREE.SphereGeometry(0.11, 12, 12);
     const mintMoon = new THREE.Mesh(mintMoonGeo, sharedIvoryMat);
     mintMoon.position.set(-1.9, -0.22, 0);
     milkyOrbitA.add(mintMoon);
 
     milkyPyGroup.add(milkyOrbitA);
 
-    const milkyAtmoGeo = new THREE.SphereGeometry(2.08, 24, 24);
+    const milkyAtmoGeo = new THREE.SphereGeometry(2.08, 18, 18);
     const milkyAtmoMat = createAtmosphereMaterial(
       COSMIC_PALETTE.milkyPyMint,
       0.46
@@ -508,7 +482,7 @@ export function StoryUniverseStage({
     );
 
     // 8. SCENE 05 — Quiet Horizon Ring Arc for About (z = -50.5)
-    const aboutHaloGeo = new THREE.TorusGeometry(WORLD_RING_RADII[1] * 0.55, 0.011, 10, 88);
+    const aboutHaloGeo = new THREE.TorusGeometry(WORLD_RING_RADII[1] * 0.55, 0.011, 8, 52);
     const aboutHaloMat = new THREE.MeshStandardMaterial({
       color: COSMIC_PALETTE.mutedUltraviolet,
       metalness: 0.8,
@@ -531,33 +505,31 @@ export function StoryUniverseStage({
     );
     scene.add(studioGroup);
 
-    const studioKnotGeo = new THREE.TorusKnotGeometry(0.84, 0.21, 96, 18, 2, 3);
-    const studioKnotMat = new THREE.MeshPhysicalMaterial({
+    const studioKnotGeo = new THREE.TorusKnotGeometry(0.84, 0.21, 56, 10, 2, 3);
+    const studioKnotMat = new THREE.MeshStandardMaterial({
       color: 0x1d2433,
       metalness: 0.9,
-      roughness: 0.25,
-      clearcoat: 0.45,
-      clearcoatRoughness: 0.22,
+      roughness: 0.24,
     });
     const studioKnot = new THREE.Mesh(studioKnotGeo, studioKnotMat);
     studioGroup.add(studioKnot);
 
     const studioAstrolabeGroup = new THREE.Group();
-    const sArcGeo1 = new THREE.TorusGeometry(1.9, 0.026, 12, 80);
+    const sArcGeo1 = new THREE.TorusGeometry(1.9, 0.026, 8, 52);
     const sArc1 = new THREE.Mesh(sArcGeo1, sharedGoldMat);
     sArc1.rotation.set(Math.PI * 0.4, 0.22, 0.14);
 
-    const sArcGeo2 = new THREE.TorusGeometry(2.36, 0.017, 12, 88);
+    const sArcGeo2 = new THREE.TorusGeometry(2.36, 0.017, 8, 56);
     const sArc2 = new THREE.Mesh(sArcGeo2, sharedGoldMat);
     sArc2.rotation.set(-0.48, Math.PI * 0.28, -0.22);
 
-    const sArcGeo3 = new THREE.TorusGeometry(2.7, 0.012, 10, 92);
+    const sArcGeo3 = new THREE.TorusGeometry(2.7, 0.012, 8, 56);
     const sArc3 = new THREE.Mesh(sArcGeo3, sharedIvoryMat);
     sArc3.rotation.set(0.22, -0.45, 0.65);
 
     studioAstrolabeGroup.add(sArc1, sArc2, sArc3);
 
-    const sPinGeo = new THREE.CylinderGeometry(0.02, 0.04, 0.12, 12);
+    const sPinGeo = new THREE.CylinderGeometry(0.02, 0.04, 0.12, 10);
     for (let i = 0; i < 2; i += 1) {
       const sign = i === 0 ? 1 : -1;
       const pin = new THREE.Mesh(sPinGeo, sharedGoldMat);
@@ -588,7 +560,7 @@ export function StoryUniverseStage({
 
     studioGroup.add(studioAstrolabeGroup);
 
-    const studioGlowGeo = new THREE.SphereGeometry(2.05, 22, 22);
+    const studioGlowGeo = new THREE.SphereGeometry(2.05, 18, 18);
     const studioGlowMat = createAtmosphereMaterial(
       COSMIC_PALETTE.ishizakiGold,
       0.42
@@ -607,23 +579,8 @@ export function StoryUniverseStage({
       studioGlowMat
     );
 
-    // Subtle Bloom strictly for capable desktop GPUs (skipped on software GL and low-power devices)
-    let composer: EffectComposer | null = null;
-    let bloomPass: UnrealBloomPass | null = null;
-    if (cap.enableBloom) {
-      composer = new EffectComposer(renderer);
-      composer.addPass(new RenderPass(scene, camera));
-      bloomPass = new UnrealBloomPass(
-        new THREE.Vector2(initW, initH),
-        0.16,
-        0.34,
-        0.9
-      );
-      composer.addPass(bloomPass);
-      composer.addPass(new OutputPass());
-    }
-
     let frameId = 0;
+    let idleTimerId = 0;
     let disposed = false;
     let renderBusy = false;
     let renderDirty = false;
@@ -696,15 +653,24 @@ export function StoryUniverseStage({
       _lookTarget.copy(_targetLook);
       camera.lookAt(_lookTarget);
 
+      // Cull distant landmarks so Hero & individual chapters only render nearby 3D subjects
+      const camZ = camera.position.z;
+      classAppGroup.visible = Math.abs(camZ - STORY_LANDMARK_POSITIONS.classapp.z) < 34;
+      milkyPyGroup.visible = Math.abs(camZ - STORY_LANDMARK_POSITIONS.milkypy.z) < 34;
+      aboutHalo.visible = Math.abs(camZ - -50.5) < 32;
+      studioGroup.visible = Math.abs(camZ - STORY_LANDMARK_POSITIONS.studio.z) < 34;
+
       centralRig.group.visible = pose.jOpacity > 0.04;
-      _targetJPos.set(pose.jPosition.x, pose.jPosition.y, pose.jPosition.z);
-      centralRig.group.position.copy(_targetJPos);
-      centralRig.group.scale.setScalar(pose.jScale);
-      centralRig.update(elapsedTotal, dt, isReduced);
-      centralRig.group.position.y =
-        pose.jPosition.y + (isReduced ? 0 : Math.sin(elapsedTotal * 0.55) * 0.065);
-      centralRig.group.rotation.y =
-        pose.jRotationY + (isReduced ? 0 : Math.sin(elapsedTotal * 0.25) * 0.08);
+      if (centralRig.group.visible) {
+        _targetJPos.set(pose.jPosition.x, pose.jPosition.y, pose.jPosition.z);
+        centralRig.group.position.copy(_targetJPos);
+        centralRig.group.scale.setScalar(pose.jScale);
+        centralRig.update(elapsedTotal, dt, isReduced);
+        centralRig.group.position.y =
+          pose.jPosition.y + (isReduced ? 0 : Math.sin(elapsedTotal * 0.55) * 0.065);
+        centralRig.group.rotation.y =
+          pose.jRotationY + (isReduced ? 0 : Math.sin(elapsedTotal * 0.25) * 0.08);
+      }
 
       _targetColor.setHex(pose.accentHex);
       storyAccentLight.color.lerp(_targetColor, isReduced ? 1 : Math.min(dt * 5, 1));
@@ -716,30 +682,35 @@ export function StoryUniverseStage({
       );
 
       if (!isReduced) {
-        classAppCore.rotation.y += dt * 0.1;
-        classAppMoons.rotation.y += dt * 0.18;
-        milkyCore.rotation.y -= dt * 0.14;
-        milkyCore.rotation.x = Math.sin(elapsedTotal * 0.35) * 0.1;
-        milkyShell.rotation.y += dt * 0.075;
-        milkyShell.rotation.z = Math.cos(elapsedTotal * 0.25) * 0.08;
-        milkyOrbitA.rotation.y += dt * 0.2;
-        studioKnot.rotation.y += dt * 0.12;
-        studioAstrolabeGroup.rotation.y -= dt * 0.14;
-        aboutHalo.rotation.z += dt * 0.04;
+        if (classAppGroup.visible) {
+          classAppCore.rotation.y += dt * 0.1;
+          classAppMoons.rotation.y += dt * 0.18;
+        }
+        if (milkyPyGroup.visible) {
+          milkyCore.rotation.y -= dt * 0.14;
+          milkyCore.rotation.x = Math.sin(elapsedTotal * 0.35) * 0.1;
+          milkyShell.rotation.y += dt * 0.075;
+          milkyShell.rotation.z = Math.cos(elapsedTotal * 0.25) * 0.08;
+          milkyOrbitA.rotation.y += dt * 0.2;
+        }
+        if (studioGroup.visible) {
+          studioKnot.rotation.y += dt * 0.12;
+          studioAstrolabeGroup.rotation.y -= dt * 0.14;
+        }
+        if (aboutHalo.visible) {
+          aboutHalo.rotation.z += dt * 0.04;
+        }
         stars.rotation.z = elapsedTotal * 0.002;
       }
 
-      if (composer && cap.enableBloom) {
-        composer.render();
-      } else {
-        renderer.render(scene, camera);
-      }
+      renderer.render(scene, camera);
 
       return transitionActive || Math.abs(prevProgress - currentDampedProgress) > 0.001;
     }
 
     function requestRender() {
       if (disposed || document.hidden) return;
+      clearTimeout(idleTimerId);
       if (renderBusy) {
         renderDirty = true;
         return;
@@ -753,9 +724,11 @@ export function StoryUniverseStage({
         const done = () => {
           renderBusy = false;
           if (disposed || document.hidden) return;
-          const keepLoopingOnGpu = !isSoftwareGl && !reducedMotionRef.current;
-          if (renderDirty || animating || keepLoopingOnGpu) {
+          if (renderDirty || animating) {
             requestRender();
+          } else if (!isSoftwareGl && !reducedMotionRef.current) {
+            // Pace idle ambient cosmos at ~25fps to keep laptop fans and integrated GPUs quiet
+            idleTimerId = window.setTimeout(requestRender, 38);
           }
         };
 
@@ -788,19 +761,20 @@ export function StoryUniverseStage({
     };
     document.addEventListener('visibilitychange', handleVisibility);
 
+    let lastW = initW;
+    let lastH = initH;
     const resizeObserver = new ResizeObserver(() => {
       if (disposed) return;
       const w = Math.max(containerEl.clientWidth, 320);
       const h = Math.max(containerEl.clientHeight, 320);
+      if (w === lastW && h === lastH) return;
+      lastW = w;
+      lastH = h;
       camera.fov = w < 640 ? 50 : 42;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      if (composer && bloomPass) {
-        composer.setSize(w, h);
-        bloomPass.resolution.set(w, h);
-      }
-      requestRender();
+      stepAndRender(performance.now());
     });
     resizeObserver.observe(containerEl);
 
@@ -816,11 +790,11 @@ export function StoryUniverseStage({
       stageNotifyRef.current = null;
       cancelAnimationFrame(frameId);
       clearTimeout(frameId);
+      clearTimeout(idleTimerId);
       resizeObserver.disconnect();
       document.removeEventListener('visibilitychange', handleVisibility);
       renderer.domElement.removeEventListener('webglcontextlost', handleContextLost);
       renderer.domElement.removeEventListener('webglcontextrestored', handleContextRestored);
-      composer?.dispose();
       disposables.forEach((d) => d.dispose());
       renderer.dispose();
       if (mountEl.contains(renderer.domElement)) {

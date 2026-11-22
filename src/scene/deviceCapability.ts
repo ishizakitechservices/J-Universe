@@ -52,16 +52,13 @@ export function detectRenderCapability(): RenderCapability {
   return {
     isSoftwareGl,
     isConstrainedDevice,
-    pixelRatio: isSoftwareGl
-      ? 1
-      : isConstrainedDevice
-      ? Math.min(dpr, 1.35)
-      : Math.min(dpr, 2),
-    enableBloom: !isSoftwareGl && !isConstrainedDevice,
-    enableShadows: !isSoftwareGl && !isConstrainedDevice,
-    starCount: isSoftwareGl ? 820 : isConstrainedDevice ? 1050 : 1400,
-    moteCount: isSoftwareGl ? 40 : isConstrainedDevice ? 54 : 70,
-    sphereSegments: isSoftwareGl ? 24 : isConstrainedDevice ? 32 : 48,
+    pixelRatio:
+      isSoftwareGl || isConstrainedDevice ? 1 : Math.min(dpr, 1.25),
+    enableBloom: false,
+    enableShadows: false,
+    starCount: isSoftwareGl ? 320 : isConstrainedDevice ? 420 : 540,
+    moteCount: isSoftwareGl ? 14 : isConstrainedDevice ? 18 : 24,
+    sphereSegments: isSoftwareGl ? 16 : isConstrainedDevice ? 20 : 24,
   };
 }
 

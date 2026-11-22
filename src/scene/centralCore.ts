@@ -47,27 +47,21 @@ export function createCentralJSculpture(maxAnisotropy: number): CentralCoreRig {
     bevelEnabled: true,
     bevelThickness: 0.055,
     bevelSize: 0.042,
-    bevelSegments: 5,
-    curveSegments: 36,
+    bevelSegments: 3,
+    curveSegments: 20,
   });
   mainGeo.center();
   mainGeo.computeVertexNormals();
 
-  const titaniumMat = new THREE.MeshPhysicalMaterial({
+  const titaniumMat = new THREE.MeshStandardMaterial({
     color: 0x1b2232,
     metalness: 0.92,
-    roughness: 0.28,
+    roughness: 0.26,
     roughnessMap: brushedRoughness,
-    anisotropy: 0.82,
-    anisotropyRotation: 0.2,
-    clearcoat: 0.4,
-    clearcoatRoughness: 0.24,
   });
 
   const mainMesh = new THREE.Mesh(mainGeo, titaniumMat);
   mainMesh.position.set(-0.14, 0.04, 0);
-  mainMesh.castShadow = true;
-  mainMesh.receiveShadow = true;
   group.add(mainMesh);
   disposables.push(mainGeo, titaniumMat);
 
@@ -78,19 +72,18 @@ export function createCentralJSculpture(maxAnisotropy: number): CentralCoreRig {
     bevelEnabled: true,
     bevelThickness: 0.018,
     bevelSize: 0.012,
-    bevelSegments: 3,
-    curveSegments: 32,
+    bevelSegments: 2,
+    curveSegments: 18,
   });
   inlayGeo.center();
   inlayGeo.computeVertexNormals();
 
-  const goldMat = new THREE.MeshPhysicalMaterial({
+  const goldMat = new THREE.MeshStandardMaterial({
     color: COSMIC_PALETTE.ishizakiGold,
     emissive: COSMIC_PALETTE.ishizakiGold,
     emissiveIntensity: 0.08,
     metalness: 0.94,
     roughness: 0.16,
-    clearcoat: 0.65,
   });
 
   const inlayMesh = new THREE.Mesh(inlayGeo, goldMat);
@@ -111,7 +104,7 @@ export function createCentralJSculpture(maxAnisotropy: number): CentralCoreRig {
     );
   }
   const cradleCurve = new THREE.CatmullRomCurve3(cradlePts);
-  const cradleGeo = new THREE.TubeGeometry(cradleCurve, 32, 0.013, 10, false);
+  const cradleGeo = new THREE.TubeGeometry(cradleCurve, 22, 0.013, 8, false);
   const cradleMesh = new THREE.Mesh(cradleGeo, goldMat);
   group.add(cradleMesh);
   disposables.push(cradleGeo);
@@ -121,18 +114,16 @@ export function createCentralJSculpture(maxAnisotropy: number): CentralCoreRig {
   dotPivot.position.set(0.76, -0.68, 0.08);
   group.add(dotPivot);
 
-  const dotCoreGeo = new THREE.SphereGeometry(0.165, 28, 28);
-  const dotCoreMat = new THREE.MeshPhysicalMaterial({
+  const dotCoreGeo = new THREE.SphereGeometry(0.165, 20, 20);
+  const dotCoreMat = new THREE.MeshStandardMaterial({
     color: COSMIC_PALETTE.warmIvory,
     metalness: 0.15,
-    roughness: 0.2,
-    clearcoat: 0.88,
-    clearcoatRoughness: 0.12,
+    roughness: 0.18,
   });
   const dotCore = new THREE.Mesh(dotCoreGeo, dotCoreMat);
   dotPivot.add(dotCore);
 
-  const dotBezelGeo = new THREE.TorusGeometry(0.24, 0.013, 12, 48);
+  const dotBezelGeo = new THREE.TorusGeometry(0.24, 0.013, 8, 36);
   const dotBezel = new THREE.Mesh(dotBezelGeo, goldMat);
   dotBezel.rotation.set(Math.PI * 0.35, 0.4, 0);
   dotPivot.add(dotBezel);
@@ -143,7 +134,7 @@ export function createCentralJSculpture(maxAnisotropy: number): CentralCoreRig {
   innerGimbalGroup.rotation.set(0.55, 0.25, -0.18);
   group.add(innerGimbalGroup);
 
-  const innerRingGeo = new THREE.TorusGeometry(1.72, 0.011, 12, 96);
+  const innerRingGeo = new THREE.TorusGeometry(1.72, 0.011, 8, 56);
   const innerRingMat = new THREE.MeshStandardMaterial({
     color: COSMIC_PALETTE.warmIvory,
     metalness: 0.85,
@@ -174,13 +165,13 @@ export function createCentralJSculpture(maxAnisotropy: number): CentralCoreRig {
   innerGimbalGroup.add(tickMesh);
 
   // Two opposing index markers (brass finial + satin pearl counterweight)
-  const finialGeo = new THREE.CylinderGeometry(0.018, 0.038, 0.11, 12);
+  const finialGeo = new THREE.CylinderGeometry(0.018, 0.038, 0.11, 10);
   const finialA = new THREE.Mesh(finialGeo, goldMat);
   finialA.position.set(1.72, 0, 0);
   finialA.rotation.z = Math.PI / 2;
   innerGimbalGroup.add(finialA);
 
-  const counterGeo = new THREE.SphereGeometry(0.048, 16, 16);
+  const counterGeo = new THREE.SphereGeometry(0.048, 12, 12);
   const counterB = new THREE.Mesh(counterGeo, dotCoreMat);
   counterB.position.set(-1.72, 0, 0);
   innerGimbalGroup.add(counterB);
@@ -189,7 +180,7 @@ export function createCentralJSculpture(maxAnisotropy: number): CentralCoreRig {
   outerGimbalGroup.rotation.set(-0.42, -0.35, 0.3);
   group.add(outerGimbalGroup);
 
-  const outerRingGeo = new THREE.TorusGeometry(2.14, 0.009, 10, 112);
+  const outerRingGeo = new THREE.TorusGeometry(2.14, 0.009, 8, 64);
   const outerRingMat = new THREE.MeshStandardMaterial({
     color: COSMIC_PALETTE.mutedUltraviolet,
     metalness: 0.72,

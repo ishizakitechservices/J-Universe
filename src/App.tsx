@@ -1,39 +1,81 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { RouterProvider, useRouter } from './utils/router';
 import { ThemeProvider } from './utils/theme';
 import { SiteHeader } from './components/SiteHeader';
 import { CommandSearchModal } from './components/CommandSearchModal';
 import { SiteFooter } from './components/SiteFooter';
 import { HomePage } from './pages/HomePage';
-import { WorkPage } from './pages/WorkPage';
-import { ProductDetailPage } from './pages/ProductDetailPage';
-import { UniversePage } from './pages/UniversePage';
-import { AboutPage } from './pages/AboutPage';
-import { StudioPage } from './pages/StudioPage';
-import { JourneyPage } from './pages/JourneyPage';
-import { LabPage } from './pages/LabPage';
-import { JournalPage } from './pages/JournalPage';
-import { ContactPage } from './pages/ContactPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { NotFoundPage } from './pages/NotFoundPage';
+
+const WorkPage = lazy(() =>
+  import('./pages/WorkPage').then((m) => ({ default: m.WorkPage }))
+);
+const ProductDetailPage = lazy(() =>
+  import('./pages/ProductDetailPage').then((m) => ({ default: m.ProductDetailPage }))
+);
+const UniversePage = lazy(() =>
+  import('./pages/UniversePage').then((m) => ({ default: m.UniversePage }))
+);
+const AboutPage = lazy(() =>
+  import('./pages/AboutPage').then((m) => ({ default: m.AboutPage }))
+);
+const StudioPage = lazy(() =>
+  import('./pages/StudioPage').then((m) => ({ default: m.StudioPage }))
+);
+const JourneyPage = lazy(() =>
+  import('./pages/JourneyPage').then((m) => ({ default: m.JourneyPage }))
+);
+const LabPage = lazy(() =>
+  import('./pages/LabPage').then((m) => ({ default: m.LabPage }))
+);
+const JournalPage = lazy(() =>
+  import('./pages/JournalPage').then((m) => ({ default: m.JournalPage }))
+);
+const ContactPage = lazy(() =>
+  import('./pages/ContactPage').then((m) => ({ default: m.ContactPage }))
+);
+const PrivacyPage = lazy(() =>
+  import('./pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage }))
+);
+const NotFoundPage = lazy(() =>
+  import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
+);
 
 function PageView({ cleanPath }: { cleanPath: string }) {
   if (cleanPath === '/') return <HomePage />;
-  if (cleanPath === '/work') return <WorkPage />;
-  if (cleanPath.startsWith('/work/')) {
-    const slug = cleanPath.slice('/work/'.length);
-    return <ProductDetailPage slug={slug} />;
-  }
-  if (cleanPath === '/universe') return <UniversePage />;
-  if (cleanPath === '/about') return <AboutPage />;
-  if (cleanPath === '/studio') return <StudioPage />;
-  if (cleanPath === '/journey') return <JourneyPage />;
-  if (cleanPath === '/lab') return <LabPage />;
-  if (cleanPath === '/journal') return <JournalPage />;
-  if (cleanPath === '/contact') return <ContactPage />;
-  if (cleanPath === '/privacy') return <PrivacyPage />;
 
-  return <NotFoundPage />;
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[60vh] flex items-center justify-center text-xs font-mono text-[#A9B1C2]">
+          Loading…
+        </div>
+      }
+    >
+      {cleanPath === '/work' ? (
+        <WorkPage />
+      ) : cleanPath.startsWith('/work/') ? (
+        <ProductDetailPage slug={cleanPath.slice('/work/'.length)} />
+      ) : cleanPath === '/universe' ? (
+        <UniversePage />
+      ) : cleanPath === '/about' ? (
+        <AboutPage />
+      ) : cleanPath === '/studio' ? (
+        <StudioPage />
+      ) : cleanPath === '/journey' ? (
+        <JourneyPage />
+      ) : cleanPath === '/lab' ? (
+        <LabPage />
+      ) : cleanPath === '/journal' ? (
+        <JournalPage />
+      ) : cleanPath === '/contact' ? (
+        <ContactPage />
+      ) : cleanPath === '/privacy' ? (
+        <PrivacyPage />
+      ) : (
+        <NotFoundPage />
+      )}
+    </Suspense>
+  );
 }
 
 function AppShell() {

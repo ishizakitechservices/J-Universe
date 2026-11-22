@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { AccentWorld, ProjectItem, StoryChapter } from '../data/universeData';
 import { BrowserMockupFrame } from './BrowserMockupFrame';
@@ -38,13 +38,6 @@ export function ProductStoryShowcase({
 }: ProductStoryShowcaseProps) {
   const chapters: StoryChapter[] = project.storyChapters ?? [];
   const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    chapters.forEach((chapter) => {
-      const preload = new Image();
-      preload.src = chapter.src;
-    });
-  }, [chapters]);
 
   if (chapters.length === 0) {
     return null;

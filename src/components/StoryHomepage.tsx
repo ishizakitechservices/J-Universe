@@ -39,10 +39,11 @@ const HERO_TEXT_SHADOW =
   '[text-shadow:0_2px_18px_rgba(8,11,18,0.92),0_1px_4px_rgba(8,11,18,0.96)]';
 
 const READABLE_CARD_SURFACE =
-  'border-[#F3F0E9]/16 bg-[#080C16]/88 backdrop-blur-lg shadow-[0_24px_64px_rgba(0,0,0,0.62)]';
+  'border-[#F3F0E9]/16 bg-[#090D18]/94 shadow-[0_14px_36px_rgba(0,0,0,0.48)]';
 
 export function StoryHomepage() {
   const sectionRefs = useRef<Array<HTMLElement | null>>([]);
+  const sectionCentersRef = useRef<number[]>([]);
   const sceneProgressRef = useRef<number>(0);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const stageNotifyRef = useRef<(() => void) | null>(null);
@@ -69,14 +70,25 @@ export function StoryHomepage() {
     return subscribeReducedMotion(setReducedMotion);
   }, []);
 
-  const syncScrollProgress = useCallback(() => {
-    const centers = sectionRefs.current.map((el, idx) => {
-      if (!el) return idx * window.innerHeight;
+  const measureSectionCenters = useCallback(() => {
+    const scrollY = window.scrollY;
+    const vh = window.innerHeight;
+    sectionCentersRef.current = sectionRefs.current.map((el, idx) => {
+      if (!el) return idx * vh;
       const rect = el.getBoundingClientRect();
-      return window.scrollY + rect.top + rect.height * 0.45;
+      return scrollY + rect.top + rect.height * 0.45;
     });
+  }, []);
+
+  const syncScrollProgress = useCallback(() => {
+    if (sectionCentersRef.current.length === 0) {
+      measureSectionCenters();
+    }
     const viewportMidY = window.scrollY + window.innerHeight * 0.5;
-    const progress = computeStoryProgressFromOffsets(viewportMidY, centers);
+    const progress = computeStoryProgressFromOffsets(
+      viewportMidY,
+      sectionCentersRef.current
+    );
     sceneProgressRef.current = progress;
     if (progressBarRef.current) {
       const normalized = Math.min(Math.max(progress / (STORY_SCENES.length - 1), 0), 1);
@@ -85,19 +97,45 @@ export function StoryHomepage() {
     const rounded = Math.round(progress);
     setActiveSceneIndex((prev) => (prev !== rounded ? rounded : prev));
     stageNotifyRef.current?.();
-  }, []);
+  }, [measureSectionCenters]);
 
   useEffect(() => {
+    measureSectionCenters();
     syncScrollProgress();
-    const onScroll = () => syncScrollProgress();
-    const onResize = () => syncScrollProgress();
-    window.addEventListener('scroll', onScroll, { passive: true });
+
+    let rafId = 0;
+    let rafPending = false;
+    const scheduleSync = () => {
+      if (rafPending) return;
+      rafPending = true;
+      rafId = requestAnimationFrame(() => {
+        rafPending = false;
+        syncScrollProgress();
+      });
+    };
+
+    const onResize = () => {
+      measureSectionCenters();
+      scheduleSync();
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      measureSectionCenters();
+      scheduleSync();
+    });
+    sectionRefs.current.forEach((el) => {
+      if (el) resizeObserver.observe(el);
+    });
+
+    window.addEventListener('scroll', scheduleSync, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(rafId);
+      resizeObserver.disconnect();
+      window.removeEventListener('scroll', scheduleSync);
       window.removeEventListener('resize', onResize);
     };
-  }, [syncScrollProgress]);
+  }, [measureSectionCenters, syncScrollProgress]);
 
   const scrollToScene = (id: string) => {
     const target = document.getElementById(id);
