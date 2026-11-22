@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, Check, Copy, ExternalLink, Mail, Sparkles } from 'lucide-react';
+import { MotionConfig, motion } from 'motion/react';
 import {
   PROJECTS,
   SITE_IDENTITY,
@@ -18,6 +19,27 @@ import { JMonogram } from './JMonogram';
 import { ResilientImage } from './ResilientImage';
 import { LightboxAsset, ScreenshotLightbox } from './ScreenshotLightbox';
 import { SiteFooter } from './SiteFooter';
+
+const REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
+
+const HERO_REVEAL = {
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.65, ease: REVEAL_EASE },
+} as const;
+
+const SECTION_REVEAL = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.16 },
+  transition: { duration: 0.6, ease: REVEAL_EASE },
+} as const;
+
+const HERO_TEXT_SHADOW =
+  '[text-shadow:0_2px_18px_rgba(8,11,18,0.92),0_1px_4px_rgba(8,11,18,0.96)]';
+
+const READABLE_CARD_SURFACE =
+  'border-[#F3F0E9]/16 bg-[#080C16]/88 backdrop-blur-lg shadow-[0_24px_64px_rgba(0,0,0,0.62)]';
 
 export function StoryHomepage() {
   const sectionRefs = useRef<Array<HTMLElement | null>>([]);
@@ -95,11 +117,12 @@ export function StoryHomepage() {
   };
 
   return (
-    <div
-      data-testid="story-homepage"
-      data-active-scene={STORY_SCENES[activeSceneIndex]?.id ?? 'arrival'}
-      className="dark relative w-full bg-[#080B12] text-[#F3F0E9]"
-    >
+    <MotionConfig reducedMotion={reducedMotion ? 'always' : 'user'}>
+      <div
+        data-testid="story-homepage"
+        data-active-scene={STORY_SCENES[activeSceneIndex]?.id ?? 'arrival'}
+        className="dark relative w-full bg-[#080B12] text-[#F3F0E9]"
+      >
       {/* Single Cohesive Full-Viewport 3D Universe Stage */}
       <StoryUniverseStage
         sceneProgressRef={sceneProgressRef}
@@ -185,8 +208,11 @@ export function StoryHomepage() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080B12] via-[#080B12]/88 via-52% to-transparent md:bg-gradient-to-r md:from-[#080B12]/88 md:via-[#080B12]/42 md:to-transparent"
           />
 
-          <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 pt-[42dvh] md:pt-0">
-            <div className="max-w-xl space-y-4 sm:space-y-6">
+          <motion.div
+            {...HERO_REVEAL}
+            className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 pt-[42dvh] md:pt-0"
+          >
+            <div className={`max-w-xl space-y-4 sm:space-y-6 ${HERO_TEXT_SHADOW}`}>
               <p className="text-sm font-medium text-[#D3AC70]">
                 {SITE_IDENTITY.owner} · {SITE_IDENTITY.location}
               </p>
@@ -232,14 +258,14 @@ export function StoryHomepage() {
                 .
               </p>
 
-              <div className="flex flex-wrap items-center gap-4 pt-1">
+              <div className="flex flex-wrap items-center gap-4 pt-1 [text-shadow:none]">
                 <a
                   href="#work"
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToScene('work');
                   }}
-                  className="min-h-[44px] inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[#F3F0E9] text-[#080B12] text-sm font-semibold hover:bg-[#D3AC70] transition-colors whitespace-nowrap"
+                  className="min-h-[44px] inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[#F3F0E9] text-[#080B12] text-sm font-semibold hover:bg-[#D3AC70] transition-colors whitespace-nowrap shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
                 >
                   <span>Explore My Work</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -247,13 +273,13 @@ export function StoryHomepage() {
 
                 <Link
                   to="/about"
-                  className="min-h-[44px] inline-flex items-center px-2 text-sm font-medium text-[#F3F0E9]/88 hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap"
+                  className={`min-h-[44px] inline-flex items-center px-2 text-sm font-medium text-[#F3F0E9]/88 hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap ${HERO_TEXT_SHADOW}`}
                 >
                   About Me
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* ================================================================
@@ -272,8 +298,11 @@ export function StoryHomepage() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#080B12]/72 to-transparent"
           />
 
-          <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 space-y-9">
-            <div className="max-w-2xl space-y-2.5">
+          <motion.div
+            {...SECTION_REVEAL}
+            className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 space-y-9"
+          >
+            <div className={`max-w-2xl space-y-2.5 ${HERO_TEXT_SHADOW}`}>
               <p className="text-xs font-semibold tracking-wide text-[#D3AC70]">
                 At a Glance
               </p>
@@ -283,70 +312,94 @@ export function StoryHomepage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-              <Link
-                to="/work/classapp"
-                className="group rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/94 p-6 sm:p-7 space-y-3 hover:border-[#B9A2E6]/50 transition-colors flex flex-col justify-between"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.14 }}
+                transition={{ duration: 0.55, delay: 0.04, ease: REVEAL_EASE }}
+                className="flex"
               >
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-[#B9A2E6]">
-                    01 · {classApp.status}
-                  </p>
-                  <h3 className="font-display text-2xl font-semibold text-[#F3F0E9]">
-                    {classApp.name}
-                  </h3>
-                  <p className="text-sm text-[#A9B1C2] leading-relaxed">
-                    A student-learning project currently at the prototype stage.
-                  </p>
-                </div>
-                <span className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-semibold text-[#B9A2E6]">
-                  <span>View ClassApp</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
-                </span>
-              </Link>
+                <Link
+                  to="/work/classapp"
+                  className={`group w-full rounded-2xl border p-6 sm:p-7 space-y-3 hover:border-[#B9A2E6]/50 transition-colors flex flex-col justify-between ${READABLE_CARD_SURFACE}`}
+                >
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-[#B9A2E6]">
+                      01 · {classApp.status}
+                    </p>
+                    <h3 className="font-display text-2xl font-semibold text-[#F3F0E9]">
+                      {classApp.name}
+                    </h3>
+                    <p className="text-sm text-[#A9B1C2] leading-relaxed">
+                      A student-learning project currently at the prototype stage.
+                    </p>
+                  </div>
+                  <span className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-semibold text-[#B9A2E6]">
+                    <span>View ClassApp</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+                  </span>
+                </Link>
+              </motion.div>
 
-              <Link
-                to="/work/milkypy"
-                className="group rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/94 p-6 sm:p-7 space-y-3 hover:border-[#7EC9B5]/50 transition-colors flex flex-col justify-between"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.14 }}
+                transition={{ duration: 0.55, delay: 0.12, ease: REVEAL_EASE }}
+                className="flex"
               >
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-[#7EC9B5]">
-                    02 · {milkyPy.status} Website
-                  </p>
-                  <h3 className="font-display text-2xl font-semibold text-[#F3F0E9]">
-                    {milkyPy.name}
-                  </h3>
-                  <p className="text-sm text-[#A9B1C2] leading-relaxed">
-                    Python lessons, browser editor, quizzes, and simple games.
-                  </p>
-                </div>
-                <span className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-semibold text-[#7EC9B5]">
-                  <span>View MilkyPy</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
-                </span>
-              </Link>
+                <Link
+                  to="/work/milkypy"
+                  className={`group w-full rounded-2xl border p-6 sm:p-7 space-y-3 hover:border-[#7EC9B5]/50 transition-colors flex flex-col justify-between ${READABLE_CARD_SURFACE}`}
+                >
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-[#7EC9B5]">
+                      02 · {milkyPy.status} Website
+                    </p>
+                    <h3 className="font-display text-2xl font-semibold text-[#F3F0E9]">
+                      {milkyPy.name}
+                    </h3>
+                    <p className="text-sm text-[#A9B1C2] leading-relaxed">
+                      Python lessons, browser editor, quizzes, and simple games.
+                    </p>
+                  </div>
+                  <span className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-semibold text-[#7EC9B5]">
+                    <span>View MilkyPy</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+                  </span>
+                </Link>
+              </motion.div>
 
-              <Link
-                to="/studio"
-                className="group rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/94 p-6 sm:p-7 space-y-3 hover:border-[#D3AC70]/50 transition-colors flex flex-col justify-between"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.14 }}
+                transition={{ duration: 0.55, delay: 0.2, ease: REVEAL_EASE }}
+                className="flex"
               >
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-[#D3AC70]">
-                    03 · Technology Initiative
-                  </p>
-                  <h3 className="font-display text-2xl font-semibold text-[#F3F0E9]">
-                    {SITE_IDENTITY.studio}
-                  </h3>
-                  <p className="text-sm text-[#A9B1C2] leading-relaxed">
-                    The technology initiative founded by {SITE_IDENTITY.owner}.
-                  </p>
-                </div>
-                <span className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-semibold text-[#D3AC70]">
-                  <span>About Studio</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
-                </span>
-              </Link>
+                <Link
+                  to="/studio"
+                  className={`group w-full rounded-2xl border p-6 sm:p-7 space-y-3 hover:border-[#D3AC70]/50 transition-colors flex flex-col justify-between ${READABLE_CARD_SURFACE}`}
+                >
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-[#D3AC70]">
+                      03 · Technology Initiative
+                    </p>
+                    <h3 className="font-display text-2xl font-semibold text-[#F3F0E9]">
+                      {SITE_IDENTITY.studio}
+                    </h3>
+                    <p className="text-sm text-[#A9B1C2] leading-relaxed">
+                      The technology initiative founded by {SITE_IDENTITY.owner}.
+                    </p>
+                  </div>
+                  <span className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-semibold text-[#D3AC70]">
+                    <span>About Studio</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+                  </span>
+                </Link>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* ================================================================
@@ -366,8 +419,11 @@ export function StoryHomepage() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080B12] via-[#080B12]/74 via-45% to-transparent md:bg-gradient-to-r md:from-[#080B12]/82 md:via-[#080B12]/36 md:to-transparent"
           />
 
-          <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 pt-[24dvh] md:pt-0">
-            <div className="max-w-xl rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/95 p-4 sm:p-6 space-y-3 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+          <motion.div
+            {...SECTION_REVEAL}
+            className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 pt-[24dvh] md:pt-0"
+          >
+            <div className={`max-w-xl rounded-2xl border p-4 sm:p-6 space-y-3 ${READABLE_CARD_SURFACE}`}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
                   <p className="text-xs font-semibold text-[#B9A2E6]">
@@ -451,7 +507,7 @@ export function StoryHomepage() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* ================================================================
@@ -470,8 +526,11 @@ export function StoryHomepage() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080B12] via-[#080B12]/74 via-45% to-transparent md:bg-gradient-to-l md:from-[#080B12]/82 md:via-[#080B12]/36 md:to-transparent"
           />
 
-          <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 pt-[24dvh] md:pt-0 flex md:justify-end">
-            <div className="max-w-xl w-full rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/95 p-4 sm:p-6 space-y-3 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+          <motion.div
+            {...SECTION_REVEAL}
+            className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 pt-[24dvh] md:pt-0 flex md:justify-end"
+          >
+            <div className={`max-w-xl w-full rounded-2xl border p-4 sm:p-6 space-y-3 ${READABLE_CARD_SURFACE}`}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
                   <p className="text-xs font-semibold text-[#7EC9B5]">
@@ -547,7 +606,7 @@ export function StoryHomepage() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* ================================================================
@@ -566,8 +625,11 @@ export function StoryHomepage() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#080B12]/78 to-transparent"
           />
 
-          <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-8">
-            <div className="rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/95 p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center">
+          <motion.div
+            {...SECTION_REVEAL}
+            className="relative mx-auto w-full max-w-6xl px-6 sm:px-8"
+          >
+            <div className={`rounded-2xl border p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center ${READABLE_CARD_SURFACE}`}>
               <div className="lg:col-span-4 flex flex-col items-start gap-6 border-b lg:border-b-0 lg:border-r border-[#F3F0E9]/10 pb-6 lg:pb-0 lg:pr-8">
                 <JMonogram size="xl" showOrbit interactive className="text-[#F3F0E9]" />
                 <div className="space-y-1">
@@ -614,7 +676,7 @@ export function StoryHomepage() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* ================================================================
@@ -633,8 +695,11 @@ export function StoryHomepage() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080B12] via-[#080B12]/74 via-45% to-transparent md:bg-gradient-to-r md:from-[#080B12]/82 md:via-[#080B12]/36 md:to-transparent"
           />
 
-          <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 pt-[30dvh] md:pt-0">
-            <div className="max-w-lg rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/95 p-6 sm:p-8 space-y-5">
+          <motion.div
+            {...SECTION_REVEAL}
+            className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 pt-[30dvh] md:pt-0"
+          >
+            <div className={`max-w-lg rounded-2xl border p-6 sm:p-8 space-y-5 ${READABLE_CARD_SURFACE}`}>
               <div className="space-y-1.5">
                 <p className="text-xs font-semibold text-[#D3AC70]">
                   {SITE_IDENTITY.studio}
@@ -668,7 +733,7 @@ export function StoryHomepage() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* ================================================================
@@ -687,8 +752,11 @@ export function StoryHomepage() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080B12] via-[#080B12]/74 to-transparent md:bg-gradient-to-r md:from-[#080B12]/82 md:via-[#080B12]/36 md:to-transparent"
           />
 
-          <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 pt-[22dvh] md:pt-0">
-            <div className="max-w-xl rounded-2xl border border-[#F3F0E9]/14 bg-[#0B101C]/95 p-6 sm:p-8 space-y-5">
+          <motion.div
+            {...SECTION_REVEAL}
+            className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 pt-[22dvh] md:pt-0"
+          >
+            <div className={`max-w-xl rounded-2xl border p-6 sm:p-8 space-y-5 ${READABLE_CARD_SURFACE}`}>
               <div className="space-y-1.5">
                 <p className="text-xs font-semibold text-[#D3AC70]">
                   Get in Touch
@@ -785,7 +853,7 @@ export function StoryHomepage() {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </section>
       </div>
 
@@ -798,6 +866,7 @@ export function StoryHomepage() {
         asset={lightboxAsset}
         onClose={() => setLightboxAsset(null)}
       />
-    </div>
+      </div>
+    </MotionConfig>
   );
 }
