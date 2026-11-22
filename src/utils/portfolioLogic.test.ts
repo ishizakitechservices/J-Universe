@@ -33,12 +33,27 @@ test('official source-of-truth enforces confirmed facts and omits unconfirmed co
   assert.equal(classApp.status, 'Prototype');
   assert.equal(classApp.liveUrl, 'https://classapp-rbci.onrender.com/');
   assert.equal(classApp.primaryActionLabel, 'View Prototype');
-  assert.equal(classApp.features.length, 0);
+  assert.deepEqual(
+    classApp.storyChapters?.map((c) => c.shortLabel),
+    ['Dashboard', 'Classes', 'Vault', 'Adom AI']
+  );
+  assert.equal(
+    classApp.features.some((f) => f.provenance === 'IMPLEMENTED IN PRO BUILD'),
+    true
+  );
+  assert.equal(
+    classApp.features.some((f) => f.provenance === 'DOCUMENTED BY PUBLIC PRODUCT'),
+    true
+  );
 
   const milkyPy = PROJECTS.find((p) => p.slug === 'milkypy')!;
   assert.equal(milkyPy.status, 'Live');
   assert.equal(milkyPy.liveUrl, 'https://milkypy.com/');
   assert.equal(milkyPy.primaryActionLabel, 'Visit MilkyPy');
+  assert.deepEqual(
+    milkyPy.storyChapters?.map((c) => c.shortLabel),
+    ['Learn', 'Practice', 'Quiz', 'Play']
+  );
 
   assert.equal(JOURNAL_ENTRIES.length, 0);
   assert.equal(JOURNEY_MILESTONES.length, 0);

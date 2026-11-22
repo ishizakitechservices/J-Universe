@@ -16,7 +16,7 @@ import {
 import { StoryUniverseStage } from '../scene/StoryUniverseStage';
 import { Link } from '../utils/router';
 import { JMonogram } from './JMonogram';
-import { ResilientImage } from './ResilientImage';
+import { ProductStoryShowcase } from './ProductStoryShowcase';
 import { LightboxAsset, ScreenshotLightbox } from './ScreenshotLightbox';
 import { SiteFooter } from './SiteFooter';
 
@@ -328,10 +328,10 @@ export function StoryHomepage() {
                       01 · {classApp.status}
                     </p>
                     <h3 className="font-display text-2xl font-semibold text-[#F3F0E9]">
-                      {classApp.name}
+                      {classApp.name} Pro
                     </h3>
                     <p className="text-sm text-[#A9B1C2] leading-relaxed">
-                      A student-learning project currently at the prototype stage.
+                      Dashboard, 11 subjects, Study Vault, Adom AI, and an early public prototype.
                     </p>
                   </div>
                   <span className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-semibold text-[#B9A2E6]">
@@ -423,14 +423,14 @@ export function StoryHomepage() {
             {...SECTION_REVEAL}
             className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 pt-[24dvh] md:pt-0"
           >
-            <div className={`max-w-xl rounded-2xl border p-4 sm:p-6 space-y-3 ${READABLE_CARD_SURFACE}`}>
+            <div className={`max-w-xl rounded-2xl border p-4 sm:p-5 space-y-3 ${READABLE_CARD_SURFACE}`}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
                   <p className="text-xs font-semibold text-[#B9A2E6]">
                     {classApp.publicIdentity ?? classApp.name} · {classApp.status}
                   </p>
-                  <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#F3F0E9] mt-0.5">
-                    {classApp.name}
+                  <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#F3F0E9] mt-0.5">
+                    {classApp.name} Pro
                   </h2>
                 </div>
                 <p className="text-xs text-[#B9A2E6]">
@@ -438,50 +438,24 @@ export function StoryHomepage() {
                 </p>
               </div>
 
-              {classApp.screenshots[0] && (
-                <ResilientImage
-                  src={classApp.screenshots[0].src}
-                  alt={classApp.screenshots[0].alt}
-                  fallbackTitle={classApp.name}
-                  accent="lavender"
-                  aspectClass="aspect-[16/10]"
-                  priority
-                  onInspect={() =>
-                    setLightboxAsset({
-                      src: classApp.screenshots[0].src,
-                      alt: classApp.screenshots[0].alt,
-                      title: classApp.name,
-                      status: classApp.status,
-                      caption: classApp.screenshots[0].caption,
-                      liveUrl: classApp.liveUrl,
-                      liveLabel: classApp.primaryActionLabel,
-                      accent: 'lavender',
-                    })
-                  }
-                  inspectLabel={`Inspect full screenshot of ${classApp.name}`}
-                  className="border-[#F3F0E9]/16 bg-[#101827]"
-                />
-              )}
+              <ProductStoryShowcase
+                project={classApp}
+                variant="compact"
+                onInspectShot={setLightboxAsset}
+              />
 
-              <p className="text-sm text-[#D0D5DF] leading-relaxed">
-                A student-learning project currently at the prototype stage, hosted at{' '}
-                <span className="font-mono text-xs text-[#F3F0E9]">
-                  classapp-rbci.onrender.com
-                </span>
-                .
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 border-t border-[#F3F0E9]/10 pt-2.5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 border-t border-[#F3F0E9]/10 pt-3 text-xs">
                 <div>
-                  <span className="font-semibold text-[#F3F0E9]">Verified:</span>{' '}
+                  <span className="font-semibold text-[#F3F0E9]">Implemented in Pro:</span>{' '}
                   <span className="text-[#A9B1C2]">
-                    Public prototype entry screen and student-learning direction.
+                    Dashboard, 11 subjects, Vault, Adom AI, Google Classroom, Quizzes & Notices.
                   </span>
                 </div>
                 <div>
-                  <span className="font-semibold text-[#B9A2E6]">Unconfirmed:</span>{' '}
+                  <span className="font-semibold text-[#B9A2E6]">Public Prototype:</span>{' '}
                   <span className="text-[#A9B1C2]">
-                    Full in-app workflows and final classroom features.
+                    Early sign-in entry at{' '}
+                    <span className="font-mono text-[#F3F0E9]">classapp-rbci.onrender.com</span>.
                   </span>
                 </div>
               </div>
@@ -503,7 +477,7 @@ export function StoryHomepage() {
                   to="/work/classapp"
                   className="min-h-[44px] inline-flex items-center px-1 text-sm font-medium text-[#F3F0E9]/90 hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap"
                 >
-                  Explore the Project
+                  Explore Full ClassApp Story
                 </Link>
               </div>
             </div>
@@ -530,13 +504,13 @@ export function StoryHomepage() {
             {...SECTION_REVEAL}
             className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 pt-[24dvh] md:pt-0 flex md:justify-end"
           >
-            <div className={`max-w-xl w-full rounded-2xl border p-4 sm:p-6 space-y-3 ${READABLE_CARD_SURFACE}`}>
+            <div className={`max-w-xl w-full rounded-2xl border p-4 sm:p-5 space-y-3 ${READABLE_CARD_SURFACE}`}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
                   <p className="text-xs font-semibold text-[#7EC9B5]">
-                    Python Learning Website · {milkyPy.status}
+                    Python Learning Platform · {milkyPy.status}
                   </p>
-                  <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#F3F0E9] mt-0.5">
+                  <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#F3F0E9] mt-0.5">
                     {milkyPy.name}
                   </h2>
                 </div>
@@ -545,45 +519,19 @@ export function StoryHomepage() {
                 </p>
               </div>
 
-              {milkyPy.screenshots[0] && (
-                <ResilientImage
-                  src={milkyPy.screenshots[0].src}
-                  alt={milkyPy.screenshots[0].alt}
-                  fallbackTitle={milkyPy.name}
-                  accent="mint"
-                  aspectClass="aspect-[16/10]"
-                  priority
-                  onInspect={() =>
-                    setLightboxAsset({
-                      src: milkyPy.screenshots[0].src,
-                      alt: milkyPy.screenshots[0].alt,
-                      title: milkyPy.name,
-                      status: milkyPy.status,
-                      caption: milkyPy.screenshots[0].caption,
-                      liveUrl: milkyPy.liveUrl,
-                      liveLabel: milkyPy.primaryActionLabel,
-                      accent: 'mint',
-                    })
-                  }
-                  inspectLabel={`Inspect full screenshot of ${milkyPy.name}`}
-                  className="border-[#F3F0E9]/16 bg-[#101827]"
-                />
-              )}
+              <ProductStoryShowcase
+                project={milkyPy}
+                variant="compact"
+                onInspectShot={setLightboxAsset}
+              />
 
-              <p className="text-sm text-[#D0D5DF] leading-relaxed">
-                {milkyPy.detailedDescription}
-              </p>
-
-              <ul className="space-y-1 border-t border-[#F3F0E9]/10 pt-2.5 text-xs text-[#A9B1C2]">
-                {milkyPy.features.map((feat) => (
-                  <li key={feat.title} className="leading-snug">
-                    <span className="font-semibold text-[#F3F0E9]">
-                      {feat.title}:
-                    </span>{' '}
-                    {feat.simpleSummary}
-                  </li>
-                ))}
-              </ul>
+              <div className="border-t border-[#F3F0E9]/10 pt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#A9B1C2]">
+                <span>
+                  <span className="font-semibold text-[#F3F0E9]">Learning Flow:</span>{' '}
+                  24 Lessons → In-Browser IDE → Quizzes → Remixable Games
+                </span>
+                <span className="font-mono text-[#7EC9B5]">PWA Offline Ready</span>
+              </div>
 
               <div className="flex flex-wrap items-center gap-4 pt-0.5">
                 {milkyPy.liveUrl && (
@@ -602,7 +550,7 @@ export function StoryHomepage() {
                   to="/work/milkypy"
                   className="min-h-[44px] inline-flex items-center px-1 text-sm font-medium text-[#7EC9B5] hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap"
                 >
-                  Explore the Project
+                  Explore Full MilkyPy Journey
                 </Link>
               </div>
             </div>

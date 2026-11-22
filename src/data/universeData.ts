@@ -16,7 +16,27 @@ export type AccentWorld = 'ultraviolet' | 'lavender' | 'mint' | 'sand';
 export type ProvenanceLevel =
   | 'CONFIRMED BY OWNER'
   | 'DOCUMENTED BY PUBLIC PRODUCT'
+  | 'IMPLEMENTED IN PRO BUILD'
+  | 'IN DEVELOPMENT'
   | 'UNCONFIRMED';
+
+export type StageAvailability =
+  | 'Live'
+  | 'ClassApp Pro Build'
+  | 'Public Prototype'
+  | 'In Development';
+
+export interface StoryChapter {
+  id: string;
+  stepNumber: string;
+  shortLabel: string;
+  title: string;
+  summary: string;
+  availability: StageAvailability;
+  src: string;
+  alt: string;
+  urlHint: string;
+}
 
 export interface ProjectFeature {
   title: string;
@@ -30,6 +50,8 @@ export interface ProjectScreenshot {
   alt: string;
   caption: string;
   sourceLabel: string;
+  availability?: StageAvailability;
+  urlHint?: string;
 }
 
 export interface ProjectItem {
@@ -53,6 +75,7 @@ export interface ProjectItem {
     architecturalDecisions: string;
   };
   features: ProjectFeature[];
+  storyChapters?: StoryChapter[];
   screenshots: ProjectScreenshot[];
   status: ProjectStatus;
   statusNote?: string;
@@ -126,7 +149,7 @@ export interface OriginStorySection {
 }
 
 /**
- * Central verified source of truth for J/UNIVERSE 4.0.
+ * Central verified source of truth for J/UNIVERSE.
  * Keeping identity, product metadata, statuses, URLs, and studio facts here ensures
  * all pages and 3D overlays stay accurate and avoids touching 3D geometry code for text updates.
  */
@@ -138,7 +161,7 @@ export const SITE_IDENTITY = {
   studio: 'Ishizaki Tech Services',
   studioTagline: 'Ideas into useful technology.',
   studioDescription:
-    'Ishizaki Tech Services is the technology initiative founded by Johnson Bediako Ametsitsi.',
+    'Ishizaki Tech Services is the independent technology initiative founded by Johnson Bediako Ametsitsi in Ghana, building practical digital products for learning and education.',
   email: 'ishizakitechservices@gmail.com',
   social: {
     xHandle: '@ishizakitech',
@@ -167,13 +190,26 @@ export const SITE_IDENTITY = {
 } as const;
 
 /**
- * Genuine product captures verified directly from the live applications.
+ * Curated product captures from both the hosted live/prototype environments
+ * and the newer ClassApp Pro / MilkyPy showcase captures.
  * Personal photography is intentionally omitted; the J. monogram represents Johnson's identity.
  */
 export const MEDIA_ASSETS = {
   classAppPrototype: '/assets/images/classapp_live_prototype.png',
+  classAppDashboard: '/assets/images/classapp/home-dashboard.jpg',
+  classAppClasses: '/assets/images/classapp/classes.jpg',
+  classAppVault: '/assets/images/classapp/vault.jpg',
+  classAppAdomAi: '/assets/images/classapp/adom-ai.jpg',
+  classAppSubjectMaths: '/assets/images/classapp/subject-maths.jpg',
+  classAppPracticeQuiz: '/assets/images/classapp/practice-quiz.jpg',
+  classAppFlashcards: '/assets/images/classapp/flashcards.jpg',
+  classAppNotices: '/assets/images/classapp/notices.jpg',
+  classAppAppearance: '/assets/images/classapp/appearance.jpg',
+  milkyPyLessonsOutline: '/assets/images/milkypy/lesson-outline.jpg',
   milkyPyPlayground: '/assets/images/milkypy_live_playground.png',
   milkyPyLessons: '/assets/images/milkypy_live_lessons.png',
+  milkyPyQuiz: '/assets/images/milkypy/quiz-question.jpg',
+  milkyPyGames: '/assets/images/milkypy/games.jpg',
 } as const;
 
 export const PROJECTS: ProjectItem[] = [
@@ -181,141 +217,395 @@ export const PROJECTS: ProjectItem[] = [
     id: 'classapp',
     name: 'ClassApp',
     slug: 'classapp',
-    publicIdentity: 'ClassApp - Student Learning',
+    publicIdentity: 'ClassApp Pro · Student Learning Platform',
     category: 'Flagship Product',
-    shortTagline: 'Exploring better ways to support student learning.',
+    shortTagline: 'A student-focused learning and productivity workspace.',
     simpleDescription: {
       whatItIs:
-        'ClassApp is a student-learning project currently at the prototype stage.',
+        'ClassApp is a student-focused learning and productivity platform combining classes, a personal study vault, curriculum tutoring, quizzes, flashcards, and school notices.',
       whoItIsFor:
-        'Students and anyone interested in seeing how early student-learning ideas are taking shape.',
+        'Senior high school students organizing subjects, notes, revision practice, and school announcements in one place.',
       problemSolved:
-        'Explores clearer ways to support student learning as an active early prototype.',
+        'Replaces scattered folders, missed notices, and disconnected revision tools with a unified study workspace.',
       whyItMatters:
-        'Testing concepts publicly at the prototype stage helps refine what actually works before finalizing full product features.',
+        'Students spend less time hunting for notes and past papers and more time learning—while a public prototype remains open for early preview.',
     },
     detailedDescription:
-      'ClassApp is a student-learning project currently at the prototype stage. Visit the hosted prototype ("ClassApp - Student Learning") to see how the idea is developing. Exact working capabilities behind sign-in are unconfirmed while the prototype continues to evolve.',
+      'ClassApp brings a student’s daily academic life—subject workspaces, Google Classroom sync, personal Study Vault, Adom AI tutoring, quizzes, flashcards, and announcements—into one focused PWA. An early prototype is publicly hosted at classapp-rbci.onrender.com while the newer ClassApp Pro build continues development.',
     technicalLayer: {
       howItWasBuilt:
-        'Published as a web prototype under the page title "ClassApp - Student Learning", featuring an entry sign-in screen for Student ID, account creation, and password reset code flow.',
+        'Designed around focused student workflows with an interactive dashboard, subject-level workspaces, file organization in the Study Vault, mathematics formula rendering, spaced-repetition flashcards, display accessibility controls, and PWA capabilities.',
       technologies: [
-        'Web Prototype Deployment',
-        'Student ID Sign-In Entry Interface',
+        'Progressive Web App (PWA) Architecture',
+        'Google Classroom Integration Workflow',
+        'Personal Study Vault Storage & File Filtering',
+        'Adom AI Curriculum Study Tutor',
+        'Formatted Mathematical Quizzes & Flashcards',
       ],
       engineeringFocus: [
-        'Exploring student-learning workflows at prototype stage',
-        'Communicating Prototype status openly rather than implying production readiness',
+        'Dashboard-to-subject flow organizing Core, Elective, and School subjects',
+        'Accessible display controls including text size, reduced motion, and high contrast',
+        'Transparent distinction between the newer Pro build and the public Render prototype entry',
       ],
       architecturalDecisions:
-        'Kept explicitly framed as an early Prototype with no unconfirmed feature promises until exact functionality is verified.',
+        'Keeps ClassApp’s public deployment status clear: the hosted link at classapp-rbci.onrender.com remains a Prototype entry point while the newer ClassApp Pro implementation features shown here undergo testing and rollout preparation.',
     },
-    // Intentionally empty: owner has not confirmed exact working features beyond prototype entry
-    features: [],
+    storyChapters: [
+      {
+        id: 'dashboard',
+        stepNumber: '01',
+        shortLabel: 'Dashboard',
+        title: 'Student Dashboard Overview',
+        summary:
+          'Opens into a calm home hub showing Recent Notices alongside quick cards for Classes, Vault storage usage, Adom AI tutoring, and unread Notices.',
+        availability: 'ClassApp Pro Build',
+        src: MEDIA_ASSETS.classAppDashboard,
+        alt: 'ClassApp Pro Student Dashboard displaying Recent Notices and navigation tiles for Classes, Vault, Adom AI, and Notices',
+        urlHint: 'classapp-pro · Dashboard',
+      },
+      {
+        id: 'classes',
+        stepNumber: '02',
+        shortLabel: 'Classes',
+        title: 'Classes & Subject Organization',
+        summary:
+          'Groups subjects into Core, Electives, and School Subjects—giving English, Mathematics, Biology, Chemistry, Physics, Computing, and more their own workspaces.',
+        availability: 'ClassApp Pro Build',
+        src: MEDIA_ASSETS.classAppClasses,
+        alt: 'ClassApp Pro Classes screen organizing 11 subjects across Core, Electives, and School Subjects',
+        urlHint: 'classapp-pro · Classes',
+      },
+      {
+        id: 'vault',
+        stepNumber: '03',
+        shortLabel: 'Vault',
+        title: 'Personal Study Vault',
+        summary:
+          'Stores PDFs, slides, worksheets, past papers, and Markdown revision notes with storage tracking, search, and category filters.',
+        availability: 'ClassApp Pro Build',
+        src: MEDIA_ASSETS.classAppVault,
+        alt: 'ClassApp Pro Study Vault showing storage meter, category filter tabs, and saved Markdown notes and PowerPoint slides',
+        urlHint: 'classapp-pro · Study Vault',
+      },
+      {
+        id: 'adom-ai',
+        stepNumber: '04',
+        shortLabel: 'Adom AI',
+        title: 'Ask Adom AI Study Tutor',
+        summary:
+          'Curriculum-oriented SHS tutor aligned to subjects like ENG, MATH, SOC, ADDMATH, BIO, CHEM, COMP, and PHY for guided study help.',
+        availability: 'ClassApp Pro Build',
+        src: MEDIA_ASSETS.classAppAdomAi,
+        alt: 'ClassApp Pro Ask Adom AI interface with subject tags for Senior High School curriculum support',
+        urlHint: 'classapp-pro · Adom AI',
+      },
+    ],
+    features: [
+      {
+        title: 'Student dashboard & subject workspaces',
+        simpleSummary:
+          'Home hub connecting Classes across Core, Elective, and School subjects with direct notice and vault counters.',
+        audience: 'ClassApp Pro Build',
+        provenance: 'IMPLEMENTED IN PRO BUILD',
+      },
+      {
+        title: 'Personal Study Vault & file organization',
+        simpleSummary:
+          'Searchable library supporting Notes, Worksheets, Past Papers, Readings, Slides, Trash recovery, and storage tracking.',
+        audience: 'ClassApp Pro Build',
+        provenance: 'IMPLEMENTED IN PRO BUILD',
+      },
+      {
+        title: 'Google Classroom subject integration',
+        simpleSummary:
+          'Connects Google Classroom coursework directly inside individual ClassApp subject views alongside personal revision notes.',
+        audience: 'ClassApp Pro Build',
+        provenance: 'IMPLEMENTED IN PRO BUILD',
+      },
+      {
+        title: 'Adom AI study assistance',
+        simpleSummary:
+          'SHS curriculum-aware study tutor supporting subject context chips for Mathematics, Sciences, English, and Computing.',
+        audience: 'ClassApp Pro Build',
+        provenance: 'IMPLEMENTED IN PRO BUILD',
+      },
+      {
+        title: 'Quizzes, flashcards & mathematical tools',
+        simpleSummary:
+          'Formatted mathematical notation in practice quizzes plus spaced-repetition flashcards with Again/Hard/Good/Easy recall grading.',
+        audience: 'ClassApp Pro Build',
+        provenance: 'IMPLEMENTED IN PRO BUILD',
+      },
+      {
+        title: 'School notices, PWA & display accessibility',
+        simpleSummary:
+          'Pinned class and school announcements alongside theme, text-size, reduced-motion, and high-contrast display controls.',
+        audience: 'ClassApp Pro Build',
+        provenance: 'IMPLEMENTED IN PRO BUILD',
+      },
+      {
+        title: 'Hosted prototype entry point',
+        simpleSummary:
+          'Publicly reachable prototype sign-in screen under "ClassApp - Student Learning" while Pro workflows undergo rollout readiness.',
+        audience: 'Public Prototype URL',
+        provenance: 'DOCUMENTED BY PUBLIC PRODUCT',
+      },
+    ],
     screenshots: [
       {
+        src: MEDIA_ASSETS.classAppDashboard,
+        alt: 'ClassApp Pro home dashboard with Classes, Vault, Adom AI, and Notices cards',
+        caption: 'Home dashboard uniting Recent Notices with Classes, Study Vault, Adom AI, and Notices.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Dashboard',
+      },
+      {
+        src: MEDIA_ASSETS.classAppClasses,
+        alt: 'ClassApp Pro Classes screen listing Core, Elective, and School Subjects',
+        caption: '11 subjects organized cleanly into Core, Electives, and School Subjects.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Classes',
+      },
+      {
+        src: MEDIA_ASSETS.classAppVault,
+        alt: 'ClassApp Pro Study Vault managing notes and presentation files with category filters',
+        caption: 'Study Vault file library with search, category tabs, and storage quota visibility.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Study Vault',
+      },
+      {
+        src: MEDIA_ASSETS.classAppAdomAi,
+        alt: 'ClassApp Pro Ask Adom AI study tutor screen with subject tags',
+        caption: 'Adom AI tutor scoped to SHS subjects including Maths, Biology, Chemistry, Physics, and Computing.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Adom AI',
+      },
+      {
+        src: MEDIA_ASSETS.classAppSubjectMaths,
+        alt: 'ClassApp Pro Mathematics subject page with Connect Google Classroom card and quick revision note composer',
+        caption: 'Subject workspace pairing Google Classroom integration with direct revision notes.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Subjects / Maths',
+      },
+      {
+        src: MEDIA_ASSETS.classAppPracticeQuiz,
+        alt: 'ClassApp Pro Mathematics practice quiz rendering exponent fraction notation cleanly',
+        caption: 'Practice quiz view with crisp mathematical fraction and exponent rendering.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Practice Quiz',
+      },
+      {
+        src: MEDIA_ASSETS.classAppFlashcards,
+        alt: 'ClassApp Pro spaced-repetition flashcard answer screen with recall rating buttons',
+        caption: 'Flashcards module with keyboard reveal and Again, Hard, Good, and Easy recall ratings.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Flashcards',
+      },
+      {
+        src: MEDIA_ASSETS.classAppNotices,
+        alt: 'ClassApp Pro school and class announcements feed with search and pinned filter',
+        caption: 'School and class Notices feed supporting search, pinned filtering, and notice creation.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Notices',
+      },
+      {
+        src: MEDIA_ASSETS.classAppAppearance,
+        alt: 'ClassApp Pro Account and Settings screen showing Light/Dark theme and Accessibility toggles',
+        caption: 'Appearance & Accessibility settings supporting Text Size, Less Motion, and High Contrast.',
+        sourceLabel: 'Implemented in ClassApp Pro build',
+        availability: 'ClassApp Pro Build',
+        urlHint: 'classapp-pro · Settings',
+      },
+      {
         src: MEDIA_ASSETS.classAppPrototype,
-        alt: 'Genuine capture of the ClassApp - Student Learning prototype sign-in screen',
-        caption:
-          'ClassApp - Student Learning prototype entry interface at classapp-rbci.onrender.com.',
-        sourceLabel: 'Live prototype capture (classapp-rbci.onrender.com)',
+        alt: 'Publicly hosted ClassApp - Student Learning prototype entry screen on Render',
+        caption: 'Public prototype entry screen live at classapp-rbci.onrender.com.',
+        sourceLabel: 'Public Prototype (classapp-rbci.onrender.com)',
+        availability: 'Public Prototype',
+        urlHint: 'classapp-rbci.onrender.com',
       },
     ],
     status: 'Prototype',
-    statusNote: 'Confirmed Prototype · Exact functionality unconfirmed',
+    statusNote: 'Public Prototype live · ClassApp Pro build features shown from development archive',
     primaryActionLabel: 'View Prototype',
     liveUrl: 'https://classapp-rbci.onrender.com/',
     themeAccent: 'lavender',
     relatedSlugs: ['milkypy', 'ishizaki-tech-services'],
     milestones: [
-      'Hosted publicly at classapp-rbci.onrender.com under the "ClassApp - Student Learning" identity.',
-      'Currently presented transparently as a Prototype while capabilities continue developing.',
+      'Public Prototype hosted at https://classapp-rbci.onrender.com/ ("ClassApp - Student Learning" sign-in entry).',
+      'Newer ClassApp Pro implementation introduces Dashboard, 11-subject Classes, Study Vault, Google Classroom link, Adom AI, Math Quizzes, Flashcards, and Notices.',
+      'Public deployment of the full Pro workspace remains in development; all Pro captures above represent the internal build rather than unauthenticated public URL claims.',
     ],
   },
   {
     id: 'milkypy',
     name: 'MilkyPy',
     slug: 'milkypy',
-    publicIdentity: 'MilkyPy — Learn Python',
+    publicIdentity: 'MilkyPy — Python IDE & Lessons',
     category: 'Learning Tool',
     shortTagline: 'Learn Python by doing.',
     simpleDescription: {
       whatItIs:
-        'MilkyPy is a Python learning website that brings lessons and coding practice together.',
+        'MilkyPy is a live Python learning website uniting structured lessons, an in-browser coding playground, quizzes, and playable coding games.',
       whoItIsFor:
-        'Students, beginners, educators, and anyone wanting to explore Python step by step in a web browser.',
+        'Beginners, students, and educators exploring Python directly in any modern browser without setup or installation.',
       problemSolved:
-        'Combines reading, interactive exercises, quizzes, and simple games in one browser-based place with offline support.',
+        'Removes environment setup barriers and turns passive reading into immediate experimentation, quiz feedback, and remixable games.',
       whyItMatters:
-        'Writing and running Python directly in a browser lowers setup friction when learning fundamental concepts.',
+        'Learners move smoothly from grasping a concept in a lesson to writing real code, testing recall, and remixing classic games—even offline.',
     },
     detailedDescription:
-      'MilkyPy is a Python learning website that brings lessons and coding practice together. Explore Python step by step, write code directly in your browser and reinforce your learning through quizzes and simple games.',
+      'MilkyPy guides learners from understanding a Python concept in 24 structured lessons, straight into writing and executing live code in its in-browser Playground, testing retention with quizzes, and remixing classic games—all available live on milkypy.com.',
     technicalLayer: {
       howItWasBuilt:
-        'Verified on milkypy.com as a browser-based Python learning workspace combining Playground, Lessons, Quiz, and Games sections with Pyodide execution and PWA offline support.',
+        'Built as an offline-capable Progressive Web App combining a 24-lesson curriculum outline, browser-native Python execution (Pyodide), topic quizzes with XP/streak feedback, and remixable arcade game source code.',
       technologies: [
-        'In-Browser Python Code Editor',
-        'Syntax Highlighting & Code Formatting',
-        'Saved Files & Direct Code Execution (Pyodide)',
+        'In-Browser Python IDE & Playground (Pyodide)',
+        '24-Lesson Interactive Curriculum Outline',
+        'Topic Quizzes with Hints, Streaks & XP',
+        'Playable & Remixable Python Mini-Games',
         'Progressive Web App (Offline Support)',
       ],
       engineeringFocus: [
-        'Step-by-step Python lessons paired with a live Playground editor',
-        'Interactive quizzes and simple coding games documented on milkypy.com',
+        'Zero-setup concept-to-practice flow with "Try in Playground" jump links',
+        'Readable beginner feedback, glossary, built-ins reference, and Code Help tools',
         'Offline-ready browser execution via service worker caching',
       ],
       architecturalDecisions:
-        'Documented on milkypy.com as uniting lessons, practice editor controls, saved files, and in-browser execution in one focused learning website.',
+        'Documented on milkypy.com as uniting structured lessons, live execution, quizzes, and remixable games in one fast browser workspace.',
     },
+    storyChapters: [
+      {
+        id: 'learn',
+        stepNumber: '01',
+        shortLabel: 'Learn',
+        title: '01 · Understand the Concept',
+        summary:
+          '24 step-by-step Python lessons cover fundamentals from print() and variables through functions and variable scope, tracking local resume progress.',
+        availability: 'Live',
+        src: MEDIA_ASSETS.milkyPyLessonsOutline,
+        alt: 'MilkyPy 24-lesson outline sidebar and Variable Scope lesson page',
+        urlHint: 'milkypy.com · Lessons',
+      },
+      {
+        id: 'practice',
+        stepNumber: '02',
+        shortLabel: 'Practice',
+        title: '02 · Run Code Immediately',
+        summary:
+          'Test ideas directly inside the browser-based Python Playground with syntax highlighting, formatting, saved files, and instant execution output.',
+        availability: 'Live',
+        src: MEDIA_ASSETS.milkyPyPlayground,
+        alt: 'MilkyPy live Python Playground running print("Hello World!") with instant output in the browser',
+        urlHint: 'milkypy.com · Playground',
+      },
+      {
+        id: 'quiz',
+        stepNumber: '03',
+        shortLabel: 'Quiz',
+        title: '03 · Check Understanding',
+        summary:
+          'Practice topic questions with Starter Mix mode, built-in hints (H), question steppers, streaks, and XP progression.',
+        availability: 'Live',
+        src: MEDIA_ASSETS.milkyPyQuiz,
+        alt: 'MilkyPy Quiz screen showing a beginner Python comment question with streak, XP, and question stepper',
+        urlHint: 'milkypy.com · Quiz',
+      },
+      {
+        id: 'play',
+        stepNumber: '04',
+        shortLabel: 'Play',
+        title: '04 · Play & Remix Python Games',
+        summary:
+          'Reinforce problem solving through playable games like Pac-Man Maze, ChompSnake, Tic-Tac-Toe AI, and Hangman—or open their Python code to remix.',
+        availability: 'Live',
+        src: MEDIA_ASSETS.milkyPyGames,
+        alt: 'MilkyPy Python Games catalogue featuring Pac-Man Maze, ChompSnake, Tic-Tac-Toe AI, and Hangman with Remix code buttons',
+        urlHint: 'milkypy.com · Games',
+      },
+    ],
     features: [
       {
-        title: 'Step-by-step Python lessons',
+        title: 'Step-by-step Python lessons (24 chapters)',
         simpleSummary:
-          'Structured beginner-friendly lessons covering Python basics, syntax, examples, and guided walkthroughs.',
-        audience: 'Documented on milkypy.com',
+          'Structured beginner-friendly lessons covering Python basics, syntax, loops, functions, and variable scope with resume tracking.',
+        audience: 'Live on milkypy.com',
         provenance: 'DOCUMENTED BY PUBLIC PRODUCT',
       },
       {
-        title: 'Browser-based Python code editor',
+        title: 'Browser-based Python code playground',
         simpleSummary:
-          'Playground editor supporting syntax highlighting, formatting, saved files, and direct Python execution.',
-        audience: 'Documented on milkypy.com',
+          'Interactive IDE supporting syntax highlighting, formatting, saved files, and instant in-browser Python execution.',
+        audience: 'Live on milkypy.com',
         provenance: 'DOCUMENTED BY PUBLIC PRODUCT',
       },
       {
-        title: 'Quizzes, simple games & offline support',
+        title: 'Interactive quizzes with hints & streaks',
         simpleSummary:
-          'Reinforce concepts through interactive quizzes, simple games, and Progressive Web App offline caching.',
-        audience: 'Documented on milkypy.com',
+          'Beginner and topic-based quizzes with hints, immediate answer review, streaks, and XP feedback.',
+        audience: 'Live on milkypy.com',
+        provenance: 'DOCUMENTED BY PUBLIC PRODUCT',
+      },
+      {
+        title: 'Playable & remixable Python coding games',
+        simpleSummary:
+          'Classic games tagged with computer science concepts so learners can play and inspect or remix the underlying Python code.',
+        audience: 'Live on milkypy.com',
         provenance: 'DOCUMENTED BY PUBLIC PRODUCT',
       },
     ],
     screenshots: [
       {
-        src: MEDIA_ASSETS.milkyPyPlayground,
-        alt: 'Genuine screenshot of MilkyPy Playground executing print("Hello World!") in the browser',
-        caption:
-          'MilkyPy Playground running Python directly in the browser on milkypy.com.',
-        sourceLabel: 'Genuine capture from milkypy.com Playground',
+        src: MEDIA_ASSETS.milkyPyLessonsOutline,
+        alt: 'MilkyPy 24-lesson curriculum sidebar and Variable Scope lesson explanation',
+        caption: '24-lesson outline tracking completion alongside readable concept walkthroughs.',
+        sourceLabel: 'Capture from milkypy.com Lessons',
+        availability: 'Live',
+        urlHint: 'milkypy.com · Lessons',
       },
       {
-        src: MEDIA_ASSETS.milkyPyLessons,
-        alt: 'Genuine screenshot of MilkyPy Python Introduction step-by-step lessons outline',
-        caption:
-          'MilkyPy Lessons interface organizing foundational Python topics step by step.',
-        sourceLabel: 'Genuine capture from milkypy.com Lessons',
+        src: MEDIA_ASSETS.milkyPyPlayground,
+        alt: 'Genuine screenshot of MilkyPy Playground executing print("Hello World!") in the browser',
+        caption: 'MilkyPy Playground running Python directly in the browser on milkypy.com.',
+        sourceLabel: 'Capture from milkypy.com Playground',
+        availability: 'Live',
+        urlHint: 'milkypy.com · Playground',
+      },
+      {
+        src: MEDIA_ASSETS.milkyPyQuiz,
+        alt: 'MilkyPy interactive quiz testing Python comment syntax with hints and question stepper',
+        caption: 'Starter Mix quiz interface reinforcing Python syntax with hints and XP.',
+        sourceLabel: 'Capture from milkypy.com Quiz',
+        availability: 'Live',
+        urlHint: 'milkypy.com · Quiz',
+      },
+      {
+        src: MEDIA_ASSETS.milkyPyGames,
+        alt: 'MilkyPy Python Games gallery showing Pac-Man Maze, ChompSnake, Tic-Tac-Toe AI, and Hangman',
+        caption: 'Games library connecting classic arcade projects with Python concepts and remix code.',
+        sourceLabel: 'Capture from milkypy.com Games',
+        availability: 'Live',
+        urlHint: 'milkypy.com · Games',
       },
     ],
     status: 'Live',
-    statusNote: 'Owner-reported Live',
+    statusNote: 'Live Platform at milkypy.com',
     primaryActionLabel: 'Visit MilkyPy',
     liveUrl: 'https://milkypy.com/',
     themeAccent: 'mint',
     relatedSlugs: ['classapp', 'ishizaki-tech-services'],
     milestones: [
-      'Published at https://milkypy.com/ (owner-reported Live).',
-      'Public homepage describes step-by-step Python lessons, browser-based editor, quizzes, simple games, and offline support.',
+      'Published live at https://milkypy.com/.',
+      'Combines 24 structured Python lessons, in-browser Playground IDE, quizzes, and playable remixable games.',
+      'Progressive Web App architecture supports offline execution and local progress saving.',
     ],
   },
   {
@@ -326,38 +616,37 @@ export const PROJECTS: ProjectItem[] = [
     shortTagline: 'Ideas into useful technology.',
     simpleDescription: {
       whatItIs:
-        'Ishizaki Tech Services is the technology initiative founded by Johnson Bediako Ametsitsi.',
+        'Ishizaki Tech Services is Johnson Bediako Ametsitsi’s independent technology initiative in Ghana behind learning platforms like ClassApp and MilkyPy.',
       whoItIsFor:
-        'Visitors, students, educators, potential collaborators, and anyone discovering projects initiated by Johnson.',
+        'Students, educators, collaborators, and anyone exploring digital products built with practical usefulness first.',
       problemSolved:
-        'Brings projects like ClassApp and MilkyPy together under one named technology initiative.',
+        'Connects independent education software projects under one clear creative studio identity.',
       whyItMatters:
-        'Establishes an honest, transparent identity for work created and shared by Johnson Bediako Ametsitsi.',
+        'Keeps the focus on useful, approachable software rather than inflated agency claims.',
     },
     detailedDescription:
-      'Ishizaki Tech Services is the technology initiative founded by Johnson Bediako Ametsitsi in Ghana. Detailed mission statements, operational structure, and any commercial service catalogue have not been published.',
+      'Ishizaki Tech Services is the independent technology initiative founded by Johnson Bediako Ametsitsi in Ghana. Rather than claiming large-team infrastructure or inventing commercial metrics, it serves as the personal umbrella uniting practical education tools like ClassApp and MilkyPy.',
     technicalLayer: {
       howItWasBuilt:
-        'Creator-founded technology initiative serving as the public umbrella for Johnson Bediako Ametsitsi’s digital projects.',
-      technologies: ['Creator-led Digital Product Projects'],
+        'Independent creator-founded initiative focused on thoughtful digital products for students, beginners, and everyday learning.',
+      technologies: ['Independent Educational Software & Web Platforms'],
       engineeringFocus: [
-        'Plain-language communication across learning and educational tools',
-        'Transparent distinction between confirmed facts, prototypes, and unpublished details',
+        'Plain-language communication paired with thoughtful interface craft',
+        'Transparent distinction between live platforms, active prototypes, and internal builds',
       ],
       architecturalDecisions:
-        'Keeps unconfirmed operational details, team claims, and service guarantees omitted until officially published.',
+        'Grounded purely in verified founder identity, real projects, and honest scope.',
     },
-    // Intentionally empty: founder has not provided a service catalogue
     features: [],
     screenshots: [],
     status: 'Live',
-    statusNote: 'Founded by Johnson Bediako Ametsitsi',
+    statusNote: 'Founded by Johnson Bediako Ametsitsi · Ghana',
     primaryActionLabel: 'Explore Studio Identity',
     themeAccent: 'sand',
     relatedSlugs: ['classapp', 'milkypy'],
     milestones: [
-      'Technology initiative founded by Johnson Bediako Ametsitsi.',
-      'Connected publicly with ClassApp (Prototype) and MilkyPy (Live).',
+      'Independent technology initiative founded by Johnson Bediako Ametsitsi in Ghana.',
+      'Connected publicly with ClassApp (Prototype / Pro build) and MilkyPy (Live).',
     ],
   },
 ];

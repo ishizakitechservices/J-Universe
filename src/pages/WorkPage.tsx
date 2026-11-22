@@ -4,7 +4,7 @@ import { PROJECTS, ProjectCategory } from '../data/universeData';
 import { filterProjects } from '../utils/portfolioLogic';
 import { Link } from '../utils/router';
 import { ChapterHeader } from '../components/JourneyLine';
-import { ResilientImage } from '../components/ResilientImage';
+import { BrowserMockupFrame } from '../components/BrowserMockupFrame';
 import { LightboxAsset, ScreenshotLightbox } from '../components/ScreenshotLightbox';
 
 const CATEGORIES: Array<ProjectCategory | 'All'> = [
@@ -122,7 +122,7 @@ export function WorkPage() {
           {productItems.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {productItems.map((project) => {
-                const thumb = project.screenshots[0];
+                const thumb = project.screenshots[1] ?? project.screenshots[0];
                 return (
                   <article
                     key={project.id}
@@ -130,19 +130,22 @@ export function WorkPage() {
                   >
                     <div className="space-y-5">
                       {thumb && (
-                        <ResilientImage
+                        <BrowserMockupFrame
                           src={thumb.src}
                           alt={thumb.alt}
                           fallbackTitle={project.name}
+                          urlHint={thumb.urlHint ?? project.slug}
+                          availability={thumb.availability}
                           accent={project.themeAccent}
                           aspectClass="aspect-[16/10]"
+                          objectFit="contain"
                           priority
                           onInspect={() =>
                             setLightboxAsset({
                               src: thumb.src,
                               alt: thumb.alt,
                               title: project.name,
-                              status: project.status,
+                              status: thumb.availability ?? project.status,
                               caption: thumb.caption,
                               liveUrl: project.liveUrl,
                               liveLabel: project.primaryActionLabel,

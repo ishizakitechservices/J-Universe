@@ -3,7 +3,8 @@ import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { AccentWorld, PROJECTS } from '../data/universeData';
 import { getRelatedProjects } from '../utils/portfolioLogic';
 import { Link } from '../utils/router';
-import { ResilientImage } from '../components/ResilientImage';
+import { BrowserMockupFrame } from '../components/BrowserMockupFrame';
+import { ProductStoryShowcase } from '../components/ProductStoryShowcase';
 import { LightboxAsset, ScreenshotLightbox } from '../components/ScreenshotLightbox';
 import { TwoLayerExplainer } from '../components/TwoLayerExplainer';
 import { MilkyPyPlayground } from '../components/MilkyPyPlayground';
@@ -29,8 +30,18 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
   }
 
   const related = getRelatedProjects(project.slug, PROJECTS);
-  const heroShot = project.screenshots[0];
-  const extraShots = project.screenshots.slice(1);
+  // Hero picks a balanced aspect-ratio screenshot when available (e.g. Classes on ClassApp, Playground on MilkyPy)
+  const heroShot =
+    project.slug === 'classapp'
+      ? project.screenshots[1] ?? project.screenshots[0]
+      : project.slug === 'milkypy'
+      ? project.screenshots[1] ?? project.screenshots[0]
+      : project.screenshots[0];
+
+  const storySrcs = new Set((project.storyChapters ?? []).map((c) => c.src));
+  const extraModuleShots = project.screenshots.filter(
+    (shot) => !storySrcs.has(shot.src)
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-6 sm:px-8 pt-10 space-y-16">
@@ -50,7 +61,7 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
       </nav>
 
       {/* Product Hero */}
-      <header className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+      <header className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             <div className={`flex flex-wrap items-center gap-2 text-xs font-semibold ${ACCENT_LABEL[project.themeAccent]}`}>
@@ -66,7 +77,7 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
             </div>
 
             <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#080B12] dark:text-[#F3F0E9]">
-              {project.name}
+              {project.slug === 'classapp' ? 'ClassApp Pro' : project.name}
             </h1>
 
             <p className={`font-display text-xl sm:text-2xl ${ACCENT_LABEL[project.themeAccent]}`}>
@@ -110,19 +121,22 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
         {heroShot && (
           <div className="lg:col-span-6 flex flex-col gap-2">
-            <ResilientImage
+            <BrowserMockupFrame
               src={heroShot.src}
               alt={heroShot.alt}
               fallbackTitle={project.name}
+              urlHint={heroShot.urlHint ?? (project.liveUrl?.replace(/^https?:\/\//, '').replace(/\/$/, '') || project.slug)}
+              availability={heroShot.availability}
               accent={project.themeAccent}
-              aspectClass="aspect-[16/10] lg:aspect-auto lg:h-full min-h-[260px]"
+              aspectClass="aspect-[16/10]"
+              objectFit="contain"
               priority
               onInspect={() =>
                 setLightboxAsset({
                   src: heroShot.src,
                   alt: heroShot.alt,
                   title: project.name,
-                  status: project.status,
+                  status: heroShot.availability ?? project.status,
                   caption: heroShot.caption,
                   liveUrl: project.liveUrl,
                   liveLabel: project.primaryActionLabel,
@@ -130,7 +144,6 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
                 })
               }
               inspectLabel={`Inspect full screenshot of ${project.name}`}
-              className="w-full"
             />
             <p className="text-xs text-[#4D5363] dark:text-[#A9B1C2]">
               {heroShot.caption}
@@ -139,55 +152,108 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
         )}
       </header>
 
-      {/* Honest Prototype Clarification for ClassApp */}
+      {/* Interactive 4-Step Product Story (Dashboard->Classes->Vault->Adom AI / Learn->Practice->Quiz->Play) */}
+      <ProductStoryShowcase
+        project={project}
+        variant="expanded"
+        onInspectShot={setLightboxAsset}
+      />
+
+      {/* Honest Availability Distinction for ClassApp */}
       {project.slug === 'classapp' && (
         <section
-          aria-label="ClassApp prototype notice"
-          className="rounded-2xl border border-[#6D48B8]/25 dark:border-[#B9A2E6]/25 bg-[#FAF8F4] dark:bg-[#101827] p-6 sm:p-8 space-y-3"
+          aria-label="ClassApp stage availability breakdown"
+          className="rounded-2xl border border-[#6D48B8]/25 dark:border-[#B9A2E6]/25 bg-[#FAF8F4] dark:bg-[#101827] p-6 sm:p-8 space-y-5"
         >
-          <p className="text-xs font-semibold text-[#6D48B8] dark:text-[#B9A2E6]">
-            Prototype Notice · ClassApp - Student Learning
-          </p>
-          <h2 className="font-display text-2xl font-semibold text-[#080B12] dark:text-[#F3F0E9]">
-            Verified scope vs. unconfirmed features
-          </h2>
-          <p className="text-sm sm:text-base text-[#4D5363] dark:text-[#A9B1C2] leading-relaxed max-w-3xl">
-            Verified: ClassApp is publicly reachable as an early student-learning prototype at{' '}
-            <span className="font-mono text-xs text-[#080B12] dark:text-[#F3F0E9]">
-              classapp-rbci.onrender.com
-            </span>
-            . Unconfirmed: Detailed classroom workflows and final product capabilities are still evolving and have not been finalized or claimed as complete.
-          </p>
+          <div className="space-y-1">
+            <p className="text-xs font-mono text-[#6D48B8] dark:text-[#B9A2E6]">
+              Release Transparency
+            </p>
+            <h2 className="font-display text-2xl font-semibold text-[#080B12] dark:text-[#F3F0E9]">
+              Public Prototype vs. Newer ClassApp Pro Build
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-xl border border-black/10 dark:border-white/10 bg-[#F3F0E9] dark:bg-[#080B12] p-5 space-y-1.5">
+              <p className="text-xs font-mono font-semibold text-[#8A6024] dark:text-[#D3AC70]">
+                01 · Publicly Available
+              </p>
+              <h3 className="font-display text-base font-semibold text-[#080B12] dark:text-[#F3F0E9]">
+                Render Prototype Entry
+              </h3>
+              <p className="text-xs sm:text-sm text-[#4D5363] dark:text-[#A9B1C2] leading-relaxed">
+                Publicly reachable today at{' '}
+                <span className="font-mono text-[#080B12] dark:text-[#F3F0E9]">
+                  classapp-rbci.onrender.com
+                </span>{' '}
+                showing the early Student ID sign-in prototype.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-black/10 dark:border-white/10 bg-[#F3F0E9] dark:bg-[#080B12] p-5 space-y-1.5">
+              <p className="text-xs font-mono font-semibold text-[#6D48B8] dark:text-[#B9A2E6]">
+                02 · Implemented in Pro Build
+              </p>
+              <h3 className="font-display text-base font-semibold text-[#080B12] dark:text-[#F3F0E9]">
+                Newer Workspace Modules
+              </h3>
+              <p className="text-xs sm:text-sm text-[#4D5363] dark:text-[#A9B1C2] leading-relaxed">
+                Dashboard, 11-subject Classes, Study Vault, Google Classroom link, Adom AI, Math Practice Quizzes, Flashcards, and Notices shown from real application captures.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-black/10 dark:border-white/10 bg-[#F3F0E9] dark:bg-[#080B12] p-5 space-y-1.5">
+              <p className="text-xs font-mono font-semibold text-[#4D5363] dark:text-[#A9B1C2]">
+                03 · In Progress
+              </p>
+              <h3 className="font-display text-base font-semibold text-[#080B12] dark:text-[#F3F0E9]">
+                Open Public Pro Rollout
+              </h3>
+              <p className="text-xs sm:text-sm text-[#4D5363] dark:text-[#A9B1C2] leading-relaxed">
+                Public open-access deployment and live multi-school Classroom rollout remain in development rather than claimed as broadly live today.
+              </p>
+            </div>
+          </div>
         </section>
       )}
 
       {/* Two-Layer Explanation (Simple vs Optional Expandable Technical Details) */}
       <TwoLayerExplainer project={project} />
 
-      {/* Additional Genuine Screenshots (e.g. MilkyPy Lessons view) */}
-      {extraShots.length > 0 && (
-        <section aria-label={`${project.name} screenshots`} className="space-y-4">
-          <h2 className="font-display text-2xl font-semibold text-[#080B12] dark:text-[#F3F0E9]">
-            Inside {project.name}
-          </h2>
-          <div className={extraShots.length > 1 ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : 'max-w-4xl'}>
-            {extraShots.map((shot) => (
+      {/* Additional ClassApp Pro Modules & Prototype Verification Gallery */}
+      {extraModuleShots.length > 0 && (
+        <section aria-label={`${project.name} additional module screenshots`} className="space-y-5">
+          <div className="space-y-1">
+            <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#080B12] dark:text-[#F3F0E9]">
+              Additional {project.slug === 'classapp' ? 'ClassApp Pro Modules & Public Prototype' : `${project.name} Views`}
+            </h2>
+            <p className="text-sm text-[#4D5363] dark:text-[#A9B1C2]">
+              Google Classroom subject integration, mathematical quiz rendering, flashcards, notices, accessibility controls, and the live Render prototype entry screen.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {extraModuleShots.map((shot) => (
               <figure
                 key={shot.src}
                 className="rounded-2xl border border-black/10 dark:border-white/10 bg-[#FAF8F4] dark:bg-[#101827] p-4 sm:p-5 space-y-3"
               >
-                <ResilientImage
+                <BrowserMockupFrame
                   src={shot.src}
                   alt={shot.alt}
                   fallbackTitle={project.name}
+                  urlHint={shot.urlHint ?? shot.sourceLabel}
+                  availability={shot.availability}
                   accent={project.themeAccent}
-                  aspectClass="aspect-[16/9]"
+                  aspectClass="aspect-[16/10]"
+                  objectFit="contain"
                   onInspect={() =>
                     setLightboxAsset({
                       src: shot.src,
                       alt: shot.alt,
                       title: project.name,
-                      status: project.status,
+                      status: shot.availability ?? project.status,
                       caption: shot.caption,
                       liveUrl: project.liveUrl,
                       liveLabel: project.primaryActionLabel,
@@ -196,8 +262,11 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
                   }
                   inspectLabel={`Inspect ${shot.caption}`}
                 />
-                <figcaption className="text-xs text-[#4D5363] dark:text-[#A9B1C2]">
-                  {shot.caption}
+                <figcaption className="flex flex-wrap items-baseline justify-between gap-2 text-xs text-[#4D5363] dark:text-[#A9B1C2]">
+                  <span>{shot.caption}</span>
+                  <span className={`font-mono shrink-0 ${ACCENT_LABEL[project.themeAccent]}`}>
+                    {shot.sourceLabel}
+                  </span>
                 </figcaption>
               </figure>
             ))}
@@ -216,8 +285,8 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
                 </h2>
                 <p className="text-xs text-[#4D5363] dark:text-[#A9B1C2]">
                   {project.slug === 'classapp'
-                    ? 'Verified from public prototype inspection only; deeper in-app features remain unconfirmed.'
-                    : 'Verified directly from the live public platform.'}
+                    ? 'Distinguishes implemented ClassApp Pro features shown above from the publicly hosted Render prototype entry.'
+                    : 'Verified directly from the live platform at milkypy.com.'}
                 </p>
               </div>
               <div className="space-y-4">
@@ -230,7 +299,7 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
                       <h3 className="font-display text-lg font-semibold text-[#080B12] dark:text-[#F3F0E9]">
                         {feat.title}
                       </h3>
-                      <span className="text-xs font-medium text-[#4D5363] dark:text-[#A9B1C2]">
+                      <span className={`text-xs font-mono ${ACCENT_LABEL[project.themeAccent]}`}>
                         {feat.audience}
                       </span>
                     </div>
@@ -246,7 +315,7 @@ export function ProductDetailPage({ slug }: ProductDetailPageProps) {
           {project.milestones.length > 0 && (
             <div className={project.features.length > 0 ? 'lg:col-span-5 space-y-5' : 'lg:col-span-12 space-y-5'}>
               <h2 className="font-display text-2xl font-semibold text-[#080B12] dark:text-[#F3F0E9]">
-                Verified Project Summary
+                Project Status Summary
               </h2>
               <div className="rounded-xl border border-black/10 dark:border-white/10 bg-[#FAF8F4] dark:bg-[#101827] p-6 space-y-4">
                 <ul className="space-y-3 text-sm text-[#4D5363] dark:text-[#A9B1C2] leading-relaxed">

@@ -449,9 +449,9 @@ export function resolveRouteMeta(pathname: string): RouteMeta {
         'Explore ClassApp (Prototype), MilkyPy (Live), and Ishizaki Tech Services by Johnson Bediako Ametsitsi.',
     },
     '/work/classapp': {
-      title: 'ClassApp — Student Learning Prototype | J/UNIVERSE',
+      title: 'ClassApp Pro — Student Learning Platform | J/UNIVERSE',
       description:
-        'ClassApp is a student-learning project currently at the prototype stage.',
+        'Explore ClassApp Pro (Dashboard, Classes, Study Vault, Adom AI, Quizzes & Notices) and the hosted student-learning prototype.',
     },
     '/work/milkypy': {
       title: 'MilkyPy — Learn Python by doing | J/UNIVERSE',
