@@ -12,6 +12,11 @@ import {
   ProjectItem,
 } from '../data/universeData';
 import {
+  formatContactDraft,
+  formatContactSubject,
+  isAllowedWebhookUrl,
+} from './contactSubmission';
+import {
   buildMailtoHref,
   filterProjects,
   getRelatedProjects,
@@ -110,7 +115,7 @@ test('searchUniverse finds destinations by keyword', () => {
   assert.equal(results[0].path, '/work/milkypy');
 });
 
-test('validateContactForm catches invalid inputs and accepts valid submissions', () => {
+test('validateContactForm allows omitting email while catching invalid inputs', () => {
   const invalid = validateContactForm({
     name: 'J',
     email: 'not-an-email',
@@ -123,22 +128,57 @@ test('validateContactForm catches invalid inputs and accepts valid submissions',
   assert.ok(invalid.errors.topic);
   assert.ok(invalid.errors.message);
 
-  const valid = validateContactForm({
+  const validWithoutEmail = validateContactForm({
     name: 'Ama Mensah',
-    email: 'ama@example.com',
-    topic: 'Product Collaboration',
-    message: 'I would love to learn more about ClassApp and MilkyPy.',
+    email: '',
+    topic: 'General Question',
+    message: 'Testing ClassApp and MilkyPy without providing my email.',
   });
-  assert.equal(valid.valid, true);
-  assert.deepEqual(valid.errors, {});
+  assert.equal(validWithoutEmail.valid, true);
+  assert.deepEqual(validWithoutEmail.errors, {});
 
-  const href = buildMailtoHref({
+  const validWithHandle = validateContactForm({
+    name: 'Kofi Boateng',
+    email: '@ishizakitech',
+    topic: 'MilkyPy Learning Inquiry',
+    message: 'Love the Python lessons on MilkyPy!',
+  });
+  assert.equal(validWithHandle.valid, true);
+
+  const hrefNoEmail = buildMailtoHref({
     name: 'Ama Mensah',
-    email: 'ama@example.com',
-    topic: 'Product Collaboration',
+    email: '',
+    topic: 'General Question',
     message: 'Hello Johnson!',
   });
-  assert.equal(href.startsWith('mailto:ishizakitechservices@gmail.com'), true);
+  assert.equal(hrefNoEmail.startsWith('mailto:ishizakitechservices@gmail.com'), true);
+  assert.equal(hrefNoEmail.includes('()'), false);
+});
+
+test('contact formatting strips header newlines and SSRF validator blocks private hosts', () => {
+  const cleanSubject = formatContactSubject({
+    name: 'Ama\r\nBcc: evil@attacker.test',
+    email: '',
+    topic: 'ClassApp\nInquiry',
+    message: 'Valid message body over ten chars',
+  });
+  assert.equal(/[\r\n]/.test(cleanSubject), false);
+
+  const draft = formatContactDraft({
+    name: 'Kwame',
+    email: '',
+    topic: 'General Question',
+    message: 'Great work on ClassApp Pro.',
+  });
+  assert.match(draft, /To: ishizakitechservices@gmail\.com/);
+  assert.match(draft, /Reply contact: Not provided/);
+
+  assert.equal(isAllowedWebhookUrl('https://formspree.io/f/demo123'), true);
+  assert.equal(isAllowedWebhookUrl('http://formspree.io/f/demo123'), false);
+  assert.equal(isAllowedWebhookUrl('https://localhost:3000/hook'), false);
+  assert.equal(isAllowedWebhookUrl('https://127.0.0.1/hook'), false);
+  assert.equal(isAllowedWebhookUrl('https://169.254.169.254/latest'), false);
+  assert.equal(isAllowedWebhookUrl('https://192.168.1.10/hook'), false);
 });
 
 test('runMilkyPyLesson evaluates print, variables, arithmetic, and loops safely', () => {

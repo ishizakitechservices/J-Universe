@@ -16,6 +16,7 @@ import {
 import { StoryUniverseStage } from '../scene/StoryUniverseStage';
 import { Link } from '../utils/router';
 import { JMonogram } from './JMonogram';
+import { ContactComposer } from './ContactComposer';
 import { ProductStoryShowcase } from './ProductStoryShowcase';
 import { LightboxAsset, ScreenshotLightbox } from './ScreenshotLightbox';
 import { SiteFooter } from './SiteFooter';
@@ -740,25 +741,25 @@ export function StoryHomepage() {
 
           <motion.div
             {...SECTION_REVEAL}
-            className="relative mx-auto w-full max-w-6xl px-6 sm:px-8 pt-[22dvh] md:pt-0"
+            className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 pt-[18dvh] md:pt-0"
           >
-            <div className={`max-w-xl rounded-2xl border p-6 sm:p-8 space-y-5 ${READABLE_CARD_SURFACE}`}>
-              <div className="space-y-1.5">
-                <p className="text-xs font-semibold text-[#D3AC70]">
-                  Get in Touch
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              <div className={`lg:col-span-5 rounded-2xl border p-6 sm:p-7 space-y-5 ${READABLE_CARD_SURFACE}`}>
+                <div className="space-y-1.5">
+                  <p className="text-xs font-semibold text-[#D3AC70]">
+                    Get in Touch
+                  </p>
+                  <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#F3F0E9] leading-tight">
+                    Have an idea worth building?
+                  </h2>
+                </div>
+
+                <p className="text-sm sm:text-base text-[#D0D5DF] leading-relaxed">
+                  Send a direct note on the right without sharing an email, or reach out via {SITE_IDENTITY.email} and {SITE_IDENTITY.social.xHandle}.
                 </p>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#F3F0E9] leading-tight">
-                  Have an idea worth building?
-                </h2>
-              </div>
 
-              <p className="text-sm sm:text-base text-[#D0D5DF] leading-relaxed">
-                Reach out directly by email or prepare an email draft on the contact page about {classApp.name}, {milkyPy.name}, or {SITE_IDENTITY.studio}.
-              </p>
-
-              <div className="border-y border-[#F3F0E9]/12 py-4 space-y-4">
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                  <div className="flex items-center gap-2.5 text-sm font-mono text-[#F3F0E9] break-words">
+                <div className="border-y border-[#F3F0E9]/12 py-4 space-y-3">
+                  <div className="flex items-center gap-2.5 text-sm font-mono text-[#F3F0E9] break-all">
                     <Mail className="w-4 h-4 text-[#D3AC70] shrink-0" aria-hidden="true" />
                     <a
                       href={`mailto:${SITE_IDENTITY.email}`}
@@ -767,76 +768,76 @@ export function StoryHomepage() {
                       {SITE_IDENTITY.email}
                     </a>
                   </div>
-                  <a
-                    href={SITE_IDENTITY.social.xUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Open ${SITE_IDENTITY.social.xHandle} on X`}
-                    className="min-h-[44px] inline-flex items-center gap-2 text-xs font-mono text-[#A9B1C2] hover:text-[#D3AC70] transition-colors"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      aria-hidden="true"
-                      className="w-3.5 h-3.5 shrink-0"
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleCopyEmail}
+                      className="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#F3F0E9]/18 text-xs font-medium text-[#F3F0E9] hover:border-[#F3F0E9]/45 transition-colors whitespace-nowrap"
                     >
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                    <span>{SITE_IDENTITY.social.xHandle}</span>
-                  </a>
+                      {copiedEmail ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-[#7EC9B5]" aria-hidden="true" />
+                          <span>Email Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>Copy Email</span>
+                        </>
+                      )}
+                    </button>
+
+                    <a
+                      href={SITE_IDENTITY.social.xUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Open ${SITE_IDENTITY.social.xHandle} on X`}
+                      className="min-h-[44px] inline-flex items-center gap-2 px-3 py-2 text-xs font-mono text-[#A9B1C2] hover:text-[#D3AC70] transition-colors whitespace-nowrap"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        className="w-3.5 h-3.5 shrink-0"
+                      >
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                      </svg>
+                      <span>{SITE_IDENTITY.social.xHandle}</span>
+                    </a>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <Link
-                    to="/contact"
-                    className="min-h-[44px] inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#F3F0E9] text-[#080B12] text-sm font-semibold hover:bg-[#D3AC70] transition-colors whitespace-nowrap"
-                  >
-                    <span>Prepare a Message</span>
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-[#A9B1C2]">
+                  <Link to="/contact" className="min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap">
+                    Full Contact Page
                   </Link>
-
+                  <Link to="/work" className="min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap">
+                    Work Overview
+                  </Link>
+                  <Link to="/universe" className="min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap">
+                    3D Map
+                  </Link>
                   <button
                     type="button"
-                    onClick={handleCopyEmail}
-                    className="min-h-[44px] inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#F3F0E9]/18 text-xs font-medium text-[#F3F0E9] hover:border-[#F3F0E9]/45 transition-colors whitespace-nowrap"
+                    onClick={() => scrollToScene('arrival')}
+                    className="min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap"
                   >
-                    {copiedEmail ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-[#7EC9B5]" aria-hidden="true" />
-                        <span>Email Copied</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" aria-hidden="true" />
-                        <span>Copy Email</span>
-                      </>
-                    )}
+                    Back to Top
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReducedMotion((prev) => !prev)}
+                    aria-pressed={reducedMotion}
+                    className="xl:hidden min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4 whitespace-nowrap"
+                  >
+                    {reducedMotion ? 'Motion: Reduced' : 'Reduce Motion'}
                   </button>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-5 text-xs text-[#A9B1C2]">
-                <Link to="/work" className="min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4">
-                  Work Overview
-                </Link>
-                <Link to="/universe" className="min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4">
-                  Interactive 3D Map
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => scrollToScene('arrival')}
-                  className="min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4"
-                >
-                  Back to Top
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setReducedMotion((prev) => !prev)}
-                  aria-pressed={reducedMotion}
-                  className="xl:hidden min-h-[44px] inline-flex items-center hover:text-[#F3F0E9] underline underline-offset-4"
-                >
-                  {reducedMotion ? 'Motion: Reduced' : 'Reduce Motion'}
-                </button>
+              <div className={`lg:col-span-7 rounded-2xl border p-6 sm:p-7 ${READABLE_CARD_SURFACE}`}>
+                <ContactComposer variant="embedded" />
               </div>
             </div>
           </motion.div>

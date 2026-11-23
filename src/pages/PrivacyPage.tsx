@@ -36,14 +36,14 @@ export function PrivacyPage() {
             Contact Messages
           </h2>
           <p>
-            Messages prepared on the Contact page are composed directly for your own email client to send to{' '}
+            Messages submitted through the contact form are sent securely to{' '}
             <a
               href={`mailto:${SITE_IDENTITY.email}`}
               className="underline underline-offset-4 text-[#080B12] dark:text-[#F3F0E9]"
             >
               {SITE_IDENTITY.email}
-            </a>
-            . Nothing is transmitted or stored in an external database by this website.
+            </a>{' '}
+            without requiring your email address (or prepared as an email draft if no mail relay is active). Form notes are never sold or stored in an advertising profile.
           </p>
         </div>
       </div>

@@ -130,55 +130,12 @@ export function searchUniverse(
   );
 }
 
-export interface ContactFormInput {
-  name: string;
-  email: string;
-  topic: string;
-  message: string;
-}
-
-export interface ContactValidationResult {
-  valid: boolean;
-  errors: Partial<Record<keyof ContactFormInput, string>>;
-}
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-export function validateContactForm(
-  input: ContactFormInput
-): ContactValidationResult {
-  const errors: Partial<Record<keyof ContactFormInput, string>> = {};
-
-  if (!input.name.trim() || input.name.trim().length < 2) {
-    errors.name = 'Please enter your name (at least 2 characters).';
-  }
-
-  if (!input.email.trim() || !EMAIL_PATTERN.test(input.email.trim())) {
-    errors.email = 'Please enter a valid email address.';
-  }
-
-  if (!input.topic.trim()) {
-    errors.topic = 'Please choose what you would like to discuss.';
-  }
-
-  if (!input.message.trim() || input.message.trim().length < 10) {
-    errors.message =
-      'Please share a short note (at least 10 characters) so I know how to respond.';
-  }
-
-  return {
-    valid: Object.keys(errors).length === 0,
-    errors,
-  };
-}
-
-export function buildMailtoHref(input: ContactFormInput): string {
-  const subject = encodeURIComponent(`[J/UNIVERSE] ${input.topic} — ${input.name.trim()}`);
-  const body = encodeURIComponent(
-    `Hi Johnson,\n\n${input.message.trim()}\n\nFrom: ${input.name.trim()} (${input.email.trim()})`
-  );
-  return `mailto:${SITE_IDENTITY.email}?subject=${subject}&body=${body}`;
-}
+export {
+  buildMailtoHref,
+  validateContactForm,
+  type ContactFormInput,
+  type ContactValidationResult,
+} from './contactSubmission';
 
 export interface MilkyPyExecutionResult {
   ok: boolean;
