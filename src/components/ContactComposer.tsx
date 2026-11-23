@@ -6,6 +6,7 @@ import {
   ContactApiResponse,
   ContactFormInput,
   buildMailtoHref,
+  copyTextSafely,
   formatContactDraft,
   validateContactForm,
 } from '../utils/contactSubmission';
@@ -59,12 +60,10 @@ export function ContactComposer({ variant = 'full' }: ContactComposerProps) {
   const handleCopyDraft = async () => {
     const draft =
       result?.draftText ?? formatContactDraft(form, SITE_IDENTITY.email);
-    try {
-      await navigator.clipboard.writeText(draft);
+    const copied = await copyTextSafely(draft);
+    if (copied) {
       setCopiedDraft(true);
       window.setTimeout(() => setCopiedDraft(false), 2500);
-    } catch {
-      // Clipboard may be restricted in sandboxed browsers
     }
   };
 
@@ -83,6 +82,52 @@ export function ContactComposer({ variant = 'full' }: ContactComposerProps) {
     setSubmitting(true);
 
     try {
+      const clientWeb3FormsKey = (
+        import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string | undefined
+      )?.trim();
+
+      if (clientWeb3FormsKey && !(form.website && form.website.trim().length > 0)) {
+        try {
+          const formData = new FormData();
+          formData.append('access_key', clientWeb3FormsKey);
+          formData.append('subject', `[J/UNIVERSE] ${form.topic.trim()} — ${form.name.trim()}`);
+          formData.append('from_name', form.name.trim());
+          formData.append('name', form.name.trim());
+          formData.append('topic', form.topic.trim());
+          if (form.email.trim()) {
+            formData.append('email', form.email.trim());
+            formData.append('replyto', form.email.trim());
+          }
+          formData.append(
+            'message',
+            `${form.message.trim()}\n\nFrom: ${form.name.trim()}\nReply Contact: ${form.email.trim() || 'Not provided'}`
+          );
+
+          const clientRes = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { Accept: 'application/json' },
+            body: formData,
+          });
+          const clientData = (await clientRes.json().catch(() => null)) as
+            | { success?: boolean; message?: string }
+            | null;
+
+          if (clientRes.ok && clientData?.success) {
+            setResult({
+              ok: true,
+              delivered: true,
+              mode: 'inbox_relay',
+              provider: 'web3forms',
+              recipient: SITE_IDENTITY.email,
+              message: `Your message has been delivered to ${SITE_IDENTITY.email}.`,
+            });
+            return;
+          }
+        } catch {
+          // Fall through cleanly to /api/contact server route
+        }
+      }
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -221,7 +266,7 @@ export function ContactComposer({ variant = 'full' }: ContactComposerProps) {
           </span>
           <div
             role="radiogroup"
-            aria-label="Message topic"
+            aria-label="Inquiry category"
             className={`grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1.5 rounded-xl ${topicContainerClass}`}
           >
             {TOPIC_OPTIONS.map((option) => {
@@ -453,7 +498,14 @@ export function ContactComposer({ variant = 'full' }: ContactComposerProps) {
               >
                 {copiedDraft ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-[#7EC9B5]" aria-hidden="true" />
+                    <Check
+                      className={`w-3.5 h-3.5 ${
+                        isEmbedded
+                          ? 'text-[#7EC9B5]'
+                          : 'text-[#167A5B] dark:text-[#7EC9B5]'
+                      }`}
+                      aria-hidden="true"
+                    />
                     <span>Message Copied</span>
                   </>
                 ) : (

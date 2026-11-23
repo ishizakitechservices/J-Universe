@@ -45,8 +45,8 @@ export function SiteHeader({ immersive = false }: SiteHeaderProps) {
   };
 
   const headerShellClass = immersive
-    ? 'fixed top-0 inset-x-0 z-40 border-b border-[#F3F0E9]/10 bg-[#080B12]/94'
-    : 'sticky top-0 z-40 border-b border-black/10 dark:border-[#F3F0E9]/10 bg-[#FAF8F4]/95 dark:bg-[#080B12]/95';
+    ? 'fixed top-0 inset-x-0 z-40 border-b border-[#F3F0E9]/10 bg-[#080B12]/96'
+    : 'sticky top-0 z-40 border-b border-black/10 dark:border-[#F3F0E9]/10 bg-[#FAF8F4] dark:bg-[#080B12]';
 
   const brandClass = immersive
     ? 'inline-flex items-center min-h-[44px] font-display text-lg font-bold tracking-tight text-[#F3F0E9] whitespace-nowrap shrink-0'

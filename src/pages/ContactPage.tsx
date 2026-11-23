@@ -3,17 +3,16 @@ import { Check, Copy, Mail } from 'lucide-react';
 import { SITE_IDENTITY } from '../data/universeData';
 import { ChapterHeader } from '../components/JourneyLine';
 import { ContactComposer } from '../components/ContactComposer';
+import { copyTextSafely } from '../utils/contactSubmission';
 
 export function ContactPage() {
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(SITE_IDENTITY.email);
+    const ok = await copyTextSafely(SITE_IDENTITY.email);
+    if (ok) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2500);
-    } catch {
-      // Clipboard blocked in restricted contexts; mailto link remains visible
     }
   };
 

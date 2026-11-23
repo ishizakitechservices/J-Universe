@@ -72,7 +72,7 @@ export function MilkyPyPlayground() {
               key={lesson.id}
               type="button"
               onClick={() => handleSelectLesson(lesson)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+              className={`min-h-[40px] px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                 lesson.id === selectedId
                   ? 'bg-[#FAF8F4] dark:bg-[#192338] text-[#080B12] dark:text-[#F3F0E9] shadow-xs'
                   : 'text-[#52555E] dark:text-[#A9B1C2] hover:text-[#080B12] dark:hover:text-[#F3F0E9]'
@@ -108,7 +108,7 @@ export function MilkyPyPlayground() {
             <button
               type="button"
               onClick={handleRun}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#167A5B] dark:bg-[#7EC9B5] text-[#FAF8F4] dark:text-[#080B12] text-xs font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#167A5B] dark:bg-[#7EC9B5] text-[#FAF8F4] dark:text-[#080B12] text-xs font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               <Play className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Run Lesson</span>
@@ -116,7 +116,7 @@ export function MilkyPyPlayground() {
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-black/12 dark:border-white/12 text-xs font-medium text-[#080B12] dark:text-[#F3F0E9] hover:bg-black/5 dark:hover:bg-white/5 transition-colors whitespace-nowrap"
+              className="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-black/12 dark:border-white/12 text-xs font-medium text-[#080B12] dark:text-[#F3F0E9] hover:bg-black/5 dark:hover:bg-white/5 transition-colors whitespace-nowrap"
             >
               <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Reset</span>

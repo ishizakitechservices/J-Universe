@@ -20,6 +20,7 @@ import { ContactComposer } from './ContactComposer';
 import { ProductStoryShowcase } from './ProductStoryShowcase';
 import { LightboxAsset, ScreenshotLightbox } from './ScreenshotLightbox';
 import { SiteFooter } from './SiteFooter';
+import { copyTextSafely } from '../utils/contactSubmission';
 
 const REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -146,12 +147,10 @@ export function StoryHomepage() {
   };
 
   const handleCopyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(SITE_IDENTITY.email);
+    const ok = await copyTextSafely(SITE_IDENTITY.email);
+    if (ok) {
       setCopiedEmail(true);
       window.setTimeout(() => setCopiedEmail(false), 2400);
-    } catch {
-      // Clipboard blocked; mailto link remains visible
     }
   };
 

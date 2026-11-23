@@ -102,7 +102,7 @@ export function CommandSearchModal() {
             type="button"
             onClick={closeSearch}
             aria-label="Close search"
-            className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-[#52555E] dark:text-[#A9B1C2] hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
+            className="inline-flex items-center justify-center w-11 h-11 rounded-lg text-[#52555E] dark:text-[#A9B1C2] hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
           >
             <X className="w-4 h-4" aria-hidden="true" />
           </button>

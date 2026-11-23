@@ -141,12 +141,23 @@ async function dispatchToConfiguredInboxRelay(
       body: JSON.stringify(payload),
     });
 
-    if (!upstream.ok) {
+    const parsed = (await upstream.json().catch(() => null)) as
+      | { success?: boolean; message?: string }
+      | null;
+
+    if (!upstream.ok || parsed?.success === false) {
+      const upstreamMsg = parsed?.message ?? '';
+      const requiresClientOrPro =
+        upstream.status === 403 &&
+        (!parsed || /client\s*side|pro plan/i.test(upstreamMsg));
+
       return {
-        configured: true,
+        configured: !requiresClientOrPro,
         delivered: false,
         provider: 'web3forms',
-        errorMessage: 'The inbox delivery service could not accept this message.',
+        errorMessage: requiresClientOrPro
+          ? 'Automatic server-side delivery via Web3Forms is unavailable on this host (use VITE_WEB3FORMS_ACCESS_KEY for browser submission or RESEND_API_KEY for direct server delivery). Your message is ready to send via your email app or copy below.'
+          : 'The inbox delivery service could not accept this message.',
       };
     }
 
@@ -322,8 +333,10 @@ async function createApp() {
         ok: true,
         delivered: false,
         mode: 'email_draft_fallback',
+        provider: relayResult.provider,
         recipient,
         message:
+          relayResult.errorMessage ||
           'Direct inbox relay is not configured on this server yet, so nothing was sent automatically. Send using your email app or copy the draft below.',
         mailtoHref,
         draftText,

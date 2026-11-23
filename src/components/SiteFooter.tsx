@@ -31,14 +31,14 @@ export function SiteFooter({ flush = false }: { flush?: boolean }) {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="px-3.5 py-2 rounded-lg border border-black/12 dark:border-[#F3F0E9]/14 text-xs font-medium text-[#080B12] dark:text-[#F3F0E9] hover:border-black/30 dark:hover:border-[#F3F0E9]/35 transition-colors whitespace-nowrap"
+                className="min-h-[44px] px-3.5 py-2 rounded-lg border border-black/12 dark:border-[#F3F0E9]/14 text-xs font-medium text-[#080B12] dark:text-[#F3F0E9] hover:border-black/30 dark:hover:border-[#F3F0E9]/35 transition-colors whitespace-nowrap"
               >
                 Switch to {resolvedTheme === 'dark' ? 'Light' : 'Dark'} Theme
               </button>
               <button
                 type="button"
                 onClick={openSearch}
-                className="px-3.5 py-2 rounded-lg border border-black/12 dark:border-[#F3F0E9]/14 text-xs font-medium text-[#080B12] dark:text-[#F3F0E9] hover:border-black/30 dark:hover:border-[#F3F0E9]/35 transition-colors whitespace-nowrap"
+                className="min-h-[44px] px-3.5 py-2 rounded-lg border border-black/12 dark:border-[#F3F0E9]/14 text-xs font-medium text-[#080B12] dark:text-[#F3F0E9] hover:border-black/30 dark:hover:border-[#F3F0E9]/35 transition-colors whitespace-nowrap"
               >
                 Search
               </button>
