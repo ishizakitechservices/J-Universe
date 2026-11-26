@@ -7,20 +7,30 @@
     <title>J/UNIVERSE — Johnson Bediako Ametsitsi</title>
     <meta
       name="description"
-      content="I turn ideas into things people can use. Johnson Bediako Ametsitsi — technology creator based in Ghana and founder of Ishizaki Tech Services."
+      content="J/UNIVERSE is the official portfolio of Johnson Bediako Ametsitsi — technology creator in Ghana, founder of Ishizaki Tech Services, and creator of ClassApp and MilkyPy."
+    />
+    <meta
+      name="keywords"
+      content="Johnson Bediako Ametsitsi, Johnson Ametsitsi, J/UNIVERSE, J UNIVERSE, Ishizaki Tech Services, @ishizakitech, ClassApp, MilkyPy, Ghana technology creator"
     />
     <meta name="author" content="Johnson Bediako Ametsitsi" />
+    <meta name="creator" content="Johnson Bediako Ametsitsi" />
+    <meta name="publisher" content="Ishizaki Tech Services" />
+    <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#080B12" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="J/UNIVERSE" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="J/UNIVERSE — Johnson Bediako Ametsitsi" />
     <meta property="og:title" content="J/UNIVERSE — Johnson Bediako Ametsitsi" />
     <meta
       property="og:description"
-      content="I turn ideas into things people can use. Explore ClassApp, MilkyPy, and Ishizaki Tech Services."
+      content="Official portfolio of Johnson Bediako Ametsitsi (J/UNIVERSE) — founder of Ishizaki Tech Services in Ghana, building ClassApp and MilkyPy."
     />
+    <meta property="profile:first_name" content="Johnson" />
+    <meta property="profile:last_name" content="Ametsitsi" />
+    <meta property="profile:username" content="ishizakitech" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -29,7 +39,7 @@
     <meta name="twitter:title" content="J/UNIVERSE — Johnson Bediako Ametsitsi" />
     <meta
       name="twitter:description"
-      content="I turn ideas into things people can use. Explore ClassApp, MilkyPy, and Ishizaki Tech Services."
+      content="Official portfolio of Johnson Bediako Ametsitsi (J/UNIVERSE) — founder of Ishizaki Tech Services in Ghana, building ClassApp and MilkyPy."
     />
 
     <!-- Typography -->
@@ -47,9 +57,23 @@
         "@graph": [
           {
             "@type": "Person",
+            "@id": "#johnson-bediako-ametsitsi",
             "name": "Johnson Bediako Ametsitsi",
+            "givenName": "Johnson",
+            "additionalName": "Bediako",
+            "familyName": "Ametsitsi",
+            "alternateName": [
+              "Johnson Ametsitsi",
+              "J/UNIVERSE",
+              "@ishizakitech"
+            ],
             "jobTitle": "Technology creator and founder of Ishizaki Tech Services",
+            "description": "Johnson Bediako Ametsitsi is a technology creator based in Ghana, founder of Ishizaki Tech Services, and creator of ClassApp and MilkyPy on J/UNIVERSE.",
             "homeLocation": {
+              "@type": "Country",
+              "name": "Ghana"
+            },
+            "nationality": {
               "@type": "Country",
               "name": "Ghana"
             },
@@ -58,31 +82,72 @@
               "https://x.com/ishizakitech"
             ],
             "worksFor": {
-              "@type": "Organization",
-              "name": "Ishizaki Tech Services"
-            }
+              "@id": "#ishizaki-tech-services"
+            },
+            "affiliation": {
+              "@id": "#ishizaki-tech-services"
+            },
+            "mainEntityOfPage": {
+              "@id": "#website"
+            },
+            "knowsAbout": [
+              "J/UNIVERSE",
+              "ClassApp",
+              "MilkyPy",
+              "Educational Technology",
+              "Python Education",
+              "Web Applications"
+            ]
           },
           {
             "@type": "Organization",
+            "@id": "#ishizaki-tech-services",
             "name": "Ishizaki Tech Services",
             "email": "mailto:ishizakitechservices@gmail.com",
             "sameAs": [
               "https://x.com/ishizakitech"
             ],
             "founder": {
-              "@type": "Person",
-              "name": "Johnson Bediako Ametsitsi"
+              "@id": "#johnson-bediako-ametsitsi"
             },
-            "description": "Ishizaki Tech Services is the technology initiative founded by Johnson Bediako Ametsitsi."
+            "description": "Ishizaki Tech Services is the independent technology initiative founded by Johnson Bediako Ametsitsi in Ghana."
           },
           {
             "@type": "WebSite",
+            "@id": "#website",
             "name": "J/UNIVERSE",
+            "alternateName": [
+              "J/UNIVERSE — Johnson Bediako Ametsitsi",
+              "Johnson Bediako Ametsitsi Portfolio"
+            ],
             "author": {
-              "@type": "Person",
-              "name": "Johnson Bediako Ametsitsi"
+              "@id": "#johnson-bediako-ametsitsi"
             },
-            "description": "Portfolio of Johnson Bediako Ametsitsi — ClassApp (Prototype), MilkyPy (Live), and Ishizaki Tech Services."
+            "creator": {
+              "@id": "#johnson-bediako-ametsitsi"
+            },
+            "publisher": {
+              "@id": "#ishizaki-tech-services"
+            },
+            "about": {
+              "@id": "#johnson-bediako-ametsitsi"
+            },
+            "keywords": "Johnson Bediako Ametsitsi, J/UNIVERSE, Ishizaki Tech Services, ClassApp, MilkyPy, Ghana",
+            "description": "Official digital portfolio (J/UNIVERSE) of Johnson Bediako Ametsitsi — featuring ClassApp (Prototype), MilkyPy (Live), and Ishizaki Tech Services."
+          },
+          {
+            "@type": "ProfilePage",
+            "@id": "#profile-page",
+            "name": "J/UNIVERSE — Johnson Bediako Ametsitsi",
+            "isPartOf": {
+              "@id": "#website"
+            },
+            "mainEntity": {
+              "@id": "#johnson-bediako-ametsitsi"
+            },
+            "about": {
+              "@id": "#johnson-bediako-ametsitsi"
+            }
           }
         ]
       }

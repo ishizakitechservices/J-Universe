@@ -109,8 +109,21 @@ export function searchUniverse(
     kind: 'Journal',
   }));
 
+  const homeResult: SearchResultItem = {
+    id: 'dest-home',
+    title: `${SITE_IDENTITY.brand} — ${SITE_IDENTITY.owner}`,
+    subtitle: `${SITE_IDENTITY.role} based in ${SITE_IDENTITY.location}.`,
+    path: '/',
+    kind: 'Home',
+  };
+
   const combinedMap = new Map<string, SearchResultItem>();
-  for (const item of [...destinationResults, ...projectResults, ...journalResults]) {
+  for (const item of [
+    ...destinationResults,
+    ...projectResults,
+    ...journalResults,
+    homeResult,
+  ]) {
     if (!combinedMap.has(item.path)) {
       combinedMap.set(item.path, item);
     }
@@ -398,70 +411,70 @@ export function resolveRouteMeta(pathname: string): RouteMeta {
     '/': {
       title: 'J/UNIVERSE — Johnson Bediako Ametsitsi',
       description:
-        'I turn ideas into things people can use. Explore ClassApp, MilkyPy, and Ishizaki Tech Services.',
+        'J/UNIVERSE is the official portfolio of Johnson Bediako Ametsitsi — technology creator in Ghana, founder of Ishizaki Tech Services, and creator of ClassApp and MilkyPy.',
     },
     '/work': {
-      title: 'Work & Products — J/UNIVERSE',
+      title: 'Work & Products — J/UNIVERSE | Johnson Bediako Ametsitsi',
       description:
-        'Explore ClassApp (Prototype), MilkyPy (Live), and Ishizaki Tech Services by Johnson Bediako Ametsitsi.',
+        'Explore ClassApp (Prototype), MilkyPy (Live), and Ishizaki Tech Services built by Johnson Bediako Ametsitsi on J/UNIVERSE.',
     },
     '/work/classapp': {
       title: 'ClassApp Pro — Student Learning Platform | J/UNIVERSE',
       description:
-        'Explore ClassApp Pro (Dashboard, Classes, Study Vault, Adom AI, Quizzes & Notices) and the hosted student-learning prototype.',
+        'ClassApp Pro and the hosted student-learning prototype by Johnson Bediako Ametsitsi (Ishizaki Tech Services) on J/UNIVERSE.',
     },
     '/work/milkypy': {
       title: 'MilkyPy — Learn Python by doing | J/UNIVERSE',
       description:
-        'MilkyPy is a Python learning website bringing lessons, a browser editor, quizzes, and simple games together.',
+        'MilkyPy is a live Python learning platform by Johnson Bediako Ametsitsi (Ishizaki Tech Services) on J/UNIVERSE.',
     },
     '/universe': {
-      title: 'Universe Explorer — J/UNIVERSE',
+      title: 'Universe Explorer — J/UNIVERSE | Johnson Bediako Ametsitsi',
       description:
-        'Interactive spatial constellation of Johnson Bediako Ametsitsi’s verified projects and profile.',
+        'Interactive spatial constellation of Johnson Bediako Ametsitsi’s verified work on J/UNIVERSE.',
     },
     '/about': {
       title: 'About Johnson Bediako Ametsitsi — J/UNIVERSE',
       description:
-        'Johnson Bediako Ametsitsi — technology creator based in Ghana and founder of Ishizaki Tech Services.',
+        'Johnson Bediako Ametsitsi — technology creator based in Ghana, founder of Ishizaki Tech Services, and creator of J/UNIVERSE.',
     },
     '/studio': {
-      title: 'Ishizaki Tech Services — Ideas into useful technology | J/UNIVERSE',
+      title: 'Ishizaki Tech Services — Johnson Bediako Ametsitsi | J/UNIVERSE',
       description:
-        'Ishizaki Tech Services is the technology initiative founded by Johnson Bediako Ametsitsi.',
+        'Ishizaki Tech Services is the independent technology initiative founded by Johnson Bediako Ametsitsi in Ghana.',
     },
     '/journey': {
-      title: 'My Journey — J/UNIVERSE',
+      title: 'My Journey — Johnson Bediako Ametsitsi | J/UNIVERSE',
       description:
-        'Journey section preserved for future stories from Johnson Bediako Ametsitsi.',
+        'Journey section preserved for future stories from Johnson Bediako Ametsitsi on J/UNIVERSE.',
     },
     '/lab': {
-      title: 'The Lab — J/UNIVERSE',
+      title: 'The Lab — J/UNIVERSE | Johnson Bediako Ametsitsi',
       description:
-        'Experimental workbench inside J/UNIVERSE reserved for future published prototypes.',
+        'Experimental workbench inside J/UNIVERSE by Johnson Bediako Ametsitsi, reserved for future published prototypes.',
     },
     '/journal': {
-      title: 'The Journal — J/UNIVERSE',
+      title: 'The Journal — Johnson Bediako Ametsitsi | J/UNIVERSE',
       description:
-        'Writing and product notes from Johnson Bediako Ametsitsi, reserved until published.',
+        'Writing and product notes from Johnson Bediako Ametsitsi on J/UNIVERSE, reserved until published.',
     },
     '/contact': {
-      title: 'Contact — J/UNIVERSE',
+      title: 'Contact Johnson Bediako Ametsitsi — J/UNIVERSE',
       description:
-        'Contact Johnson Bediako Ametsitsi and Ishizaki Tech Services at ishizakitechservices@gmail.com or @ishizakitech.',
+        'Contact Johnson Bediako Ametsitsi and Ishizaki Tech Services (J/UNIVERSE) at ishizakitechservices@gmail.com or @ishizakitech.',
     },
     '/privacy': {
-      title: 'Privacy & Notice — J/UNIVERSE',
+      title: 'Privacy & Notice — J/UNIVERSE | Johnson Bediako Ametsitsi',
       description:
-        'Privacy-conscious site notice for J/UNIVERSE and Ishizaki Tech Services.',
+        'Privacy-conscious site notice for J/UNIVERSE by Johnson Bediako Ametsitsi and Ishizaki Tech Services.',
     },
   };
 
   return (
     map[clean] ?? {
-      title: 'Destination — J/UNIVERSE',
+      title: 'J/UNIVERSE — Johnson Bediako Ametsitsi',
       description:
-        'Explore J/UNIVERSE by Johnson Bediako Ametsitsi and Ishizaki Tech Services.',
+        'Explore J/UNIVERSE, the digital portfolio of Johnson Bediako Ametsitsi and Ishizaki Tech Services.',
     }
   );
 }

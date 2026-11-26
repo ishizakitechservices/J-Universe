@@ -82,7 +82,7 @@ async function dispatchToConfiguredInboxRelay(
     input.message.trim(),
   ].join('\n');
 
-  const resendKey = process.env.RESEND_API_KEY?.trim();
+  const resendKey = process.env.RESEND_API_KEY?.trim().replace(/^["']|["']$/g, '');
   if (resendKey) {
     const fromEmail =
       process.env.CONTACT_FROM_EMAIL?.trim() || 'J/UNIVERSE <onboarding@resend.dev>';
@@ -105,12 +105,18 @@ async function dispatchToConfiguredInboxRelay(
       body: JSON.stringify(payload),
     });
 
-    if (!upstream.ok) {
+    const parsed = (await upstream.json().catch(() => null)) as
+      | { id?: string; message?: string; name?: string }
+      | null;
+
+    if (!upstream.ok || !parsed?.id) {
       return {
         configured: true,
         delivered: false,
         provider: 'resend',
-        errorMessage: 'The email relay rejected this request.',
+        errorMessage:
+          parsed?.message ||
+          'Resend could not send this message. Check your RESEND_API_KEY and sender configuration.',
       };
     }
 

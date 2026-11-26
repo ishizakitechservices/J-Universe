@@ -216,4 +216,32 @@ test('resolveRouteMeta returns branded metadata for known routes', () => {
   const meta = resolveRouteMeta('/work/classapp');
   assert.match(meta.title, /ClassApp/);
   assert.match(meta.description, /prototype/i);
+  assert.match(meta.description, /Johnson Bediako Ametsitsi/);
+
+  const homeMeta = resolveRouteMeta('/');
+  assert.match(homeMeta.title, /J\/UNIVERSE/);
+  assert.match(homeMeta.title, /Johnson Bediako Ametsitsi/);
+  assert.match(homeMeta.description, /J\/UNIVERSE/);
+  assert.match(homeMeta.description, /Johnson Bediako Ametsitsi/);
+
+  const aboutMeta = resolveRouteMeta('/about');
+  assert.match(aboutMeta.title, /Johnson Bediako Ametsitsi/);
+  assert.match(aboutMeta.title, /J\/UNIVERSE/);
+
+  const nameHits = searchUniverse(
+    'Johnson Bediako Ametsitsi',
+    UNIVERSE_DESTINATIONS,
+    PROJECTS,
+    JOURNAL_ENTRIES
+  );
+  assert.equal(nameHits.some((item) => item.path === '/'), true);
+  assert.equal(nameHits.some((item) => item.path === '/about'), true);
+
+  const brandHits = searchUniverse(
+    'J/UNIVERSE',
+    UNIVERSE_DESTINATIONS,
+    PROJECTS,
+    JOURNAL_ENTRIES
+  );
+  assert.equal(brandHits.some((item) => item.path === '/'), true);
 });
